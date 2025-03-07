@@ -1,0 +1,14 @@
+BasedOnStyle: Microsoft
+AllowShortFunctionsOnASingleLine: None
+IndentWidth: 2
+# AccessModifierOffset: -2
+# AlignAfterOpenBracket: BlockIndent
+# AlwaysBreakAfterReturnType: None
+# SpaceBeforeParens: ControlStatements
+# BinPackArguments: false
+# BinPackParameters: false
+# AllowAllArgumentsOnNextLine: false
+# SpaceInEmptyParentheses: false
+# SpacesInParentheses: false
+# SpacesInSquareBrackets: false
+# SpaceBeforeSquareBrackets: false
