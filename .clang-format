@@ -1,14 +1,18 @@
+Language: Cpp
 BasedOnStyle: Microsoft
+ColumnLimit: 80
+IndentWidth: 4
 AllowShortFunctionsOnASingleLine: None
-IndentWidth: 2
-# AccessModifierOffset: -2
-# AlignAfterOpenBracket: BlockIndent
-# AlwaysBreakAfterReturnType: None
-# SpaceBeforeParens: ControlStatements
-# BinPackArguments: false
-# BinPackParameters: false
-# AllowAllArgumentsOnNextLine: false
-# SpaceInEmptyParentheses: false
-# SpacesInParentheses: false
-# SpacesInSquareBrackets: false
-# SpaceBeforeSquareBrackets: false
+SpaceBeforeParens: Never
+BreakAfterReturnType: None
+IndentCaseBlocks: false
+IndentCaseLabels: true
+# IndentExportBlock: true
+IndentExternBlock: AfterExternBlock
+NamespaceIndentation: All
+UseTab: Never
+BraceWrapping:
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+  IndentBraces: false

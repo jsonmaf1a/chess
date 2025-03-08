@@ -5,9 +5,9 @@
 
 void Board::draw()
 {
-    for (int row = 0; row < gridSize; row++)
+    for(int row = 0; row < gridSize; row++)
     {
-        for (int col = 0; col < gridSize; col++)
+        for(int col = 0; col < gridSize; col++)
         {
             sf::RectangleShape rect(sf::Vector2f(cellSize, cellSize));
 

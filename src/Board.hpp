@@ -1,15 +1,13 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <cstdint>
 
 class Board
 {
   public:
     Board(sf::RenderWindow &target) : gridSize(8), cellSize(100), target(target)
-    {
-    }
+    {}
 
     ~Board() {};
 

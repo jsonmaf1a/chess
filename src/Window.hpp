@@ -7,35 +7,36 @@
 
 class Window
 {
-public:
-  static constexpr sf::Color background = {30, 30, 30, 255};
+  public:
+    static constexpr sf::Color background = {30, 30, 30, 255};
 
-  Window(uint width, uint height, const std::string &title)
-      : width(width), height(height), title(title), is_initialized(false)
-  {
-    rw.create(sf::VideoMode({width, height}), title.c_str());
-    is_initialized = true;
-  }
-
-  ~Window()
-  {
-    if (is_initialized)
+    Window(uint width, uint height, const std::string &title)
+        : width(width), height(height), title(title), is_initialized(false)
     {
-      rw.close();
+        rw.create(sf::VideoMode({width, height}), title.c_str());
+        is_initialized = true;
     }
 
-    is_initialized = false;
-  }
+    ~Window()
+    {
+        if(is_initialized)
+        {
+            rw.close();
+        }
 
-  sf::RenderWindow &getRenderWindow();
-  void pollEvents();
+        is_initialized = false;
+    }
 
-private:
-  sf::RenderWindow rw;
+    sf::RenderWindow &getRenderWindow();
+    void handleEvents();
+    void handleKeyPress(const std::optional<sf::Event::KeyPressed> &event);
 
-  const uint width;
-  const uint height;
-  const std::string title;
+  private:
+    sf::RenderWindow rw;
 
-  bool is_initialized;
+    const uint width;
+    const uint height;
+    const std::string title;
+
+    bool is_initialized;
 };

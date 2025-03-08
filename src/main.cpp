@@ -11,9 +11,9 @@ int main()
 
     Board board(rw);
 
-    while (rw.isOpen())
+    while(rw.isOpen())
     {
-        window.pollEvents();
+        window.handleEvents();
 
         rw.clear();
         board.draw();
