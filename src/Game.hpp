@@ -17,6 +17,13 @@ struct Move
     sf::Vector2f position;
 };
 
+// TODO:
+// * Count all moves to follow 50-move rule
+// * Handle:
+// * - mate
+// * - stalemate (no possible moves, repetitions)
+// * - win
+// * - lose
 class Game
 {
   private:

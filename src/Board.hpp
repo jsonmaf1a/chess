@@ -22,5 +22,7 @@ class Board
 
     std::vector<std::shared_ptr<Piece>> pieces;
 
-    sf::Color getCellColor(int position);
+    sf::Color getCellColor(int position) const;
+    std::string toChessNotation(const sf::Vector2i &pos) const;
+    sf::Vector2i fromChessNotation(const std::string &notation) const;
 };

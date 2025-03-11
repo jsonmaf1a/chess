@@ -37,61 +37,77 @@ void Board::draw()
 void Board::initializePieces()
 {
     // =============== Pawns =================
-    for(int col = 0; col < GRID_SIZE; col++)
+    for(char file = 'A'; file <= 'H'; file++)
     {
-        pieces.push_back(
-            std::make_shared<Pawn>(sf::Vector2i(col, 6), PieceColor::White));
-        pieces.push_back(
-            std::make_shared<Pawn>(sf::Vector2i(col, 1), PieceColor::Black));
+        pieces.emplace_back(std::make_shared<Pawn>(
+            fromChessNotation(std::format("{}2", file)), PieceColor::White));
+        pieces.emplace_back(std::make_shared<Pawn>(
+            fromChessNotation(std::format("{}7", file)), PieceColor::Black));
     }
 
     // =============== Rooks =================
     pieces.push_back(
-        std::make_shared<Rook>(sf::Vector2i(0, 0), PieceColor::Black));
+        std::make_shared<Rook>(fromChessNotation("A1"), PieceColor::White));
     pieces.push_back(
-        std::make_shared<Rook>(sf::Vector2i(7, 0), PieceColor::Black));
-
+        std::make_shared<Rook>(fromChessNotation("H1"), PieceColor::White));
     pieces.push_back(
-        std::make_shared<Rook>(sf::Vector2i(0, 7), PieceColor::White));
+        std::make_shared<Rook>(fromChessNotation("A8"), PieceColor::Black));
     pieces.push_back(
-        std::make_shared<Rook>(sf::Vector2i(7, 7), PieceColor::White));
+        std::make_shared<Rook>(fromChessNotation("H8"), PieceColor::Black));
 
     // =============== Knights ===============
     pieces.push_back(
-        std::make_shared<Knight>(sf::Vector2i(1, 0), PieceColor::Black));
+        std::make_shared<Knight>(fromChessNotation("B1"), PieceColor::White));
     pieces.push_back(
-        std::make_shared<Knight>(sf::Vector2i(6, 0), PieceColor::Black));
-
+        std::make_shared<Knight>(fromChessNotation("G1"), PieceColor::White));
     pieces.push_back(
-        std::make_shared<Knight>(sf::Vector2i(1, 7), PieceColor::White));
+        std::make_shared<Knight>(fromChessNotation("B8"), PieceColor::Black));
     pieces.push_back(
-        std::make_shared<Knight>(sf::Vector2i(6, 7), PieceColor::White));
+        std::make_shared<Knight>(fromChessNotation("G8"), PieceColor::Black));
 
     // =============== Bishops ===============
     pieces.push_back(
-        std::make_shared<Bishop>(sf::Vector2i(2, 0), PieceColor::Black));
+        std::make_shared<Bishop>(fromChessNotation("C1"), PieceColor::White));
     pieces.push_back(
-        std::make_shared<Bishop>(sf::Vector2i(5, 0), PieceColor::Black));
-
+        std::make_shared<Bishop>(fromChessNotation("F1"), PieceColor::White));
     pieces.push_back(
-        std::make_shared<Bishop>(sf::Vector2i(2, 7), PieceColor::White));
+        std::make_shared<Bishop>(fromChessNotation("C8"), PieceColor::Black));
     pieces.push_back(
-        std::make_shared<Bishop>(sf::Vector2i(5, 7), PieceColor::White));
+        std::make_shared<Bishop>(fromChessNotation("F8"), PieceColor::Black));
 
     // =============== Queens =================
     pieces.push_back(
-        std::make_shared<Queen>(sf::Vector2i(3, 0), PieceColor::Black));
+        std::make_shared<Queen>(fromChessNotation("D1"), PieceColor::White));
     pieces.push_back(
-        std::make_shared<Queen>(sf::Vector2i(3, 7), PieceColor::White));
+        std::make_shared<Queen>(fromChessNotation("D8"), PieceColor::Black));
 
     // =============== Kings ==================
     pieces.push_back(
-        std::make_shared<King>(sf::Vector2i(4, 0), PieceColor::Black));
+        std::make_shared<King>(fromChessNotation("E1"), PieceColor::White));
     pieces.push_back(
-        std::make_shared<King>(sf::Vector2i(4, 7), PieceColor::White));
+        std::make_shared<King>(fromChessNotation("E8"), PieceColor::Black));
 }
 
-sf::Color Board::getCellColor(int position)
+sf::Color Board::getCellColor(int cellPosition) const
 {
-    return position % 2 == 0 ? colorLight : colorDark;
+    return cellPosition % 2 == 0 ? colorLight : colorDark;
 };
+
+std::string Board::toChessNotation(const sf::Vector2i &position) const
+{
+    char file = 'A' + position.x;
+    char rank = '1' + (7 - position.y);
+
+    return std::string(1, file) + rank;
+}
+
+sf::Vector2i Board::fromChessNotation(const std::string &notation) const
+{
+    if(notation.length() != 2)
+        throw std::invalid_argument("Invalid notation");
+
+    int x = notation[0] - 'A';
+    int y = 7 - (notation[1] - '1');
+
+    return {x, y};
+}
