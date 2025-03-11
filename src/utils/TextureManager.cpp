@@ -1,11 +1,8 @@
 #include "TextureManager.hpp"
 
-#include <map>
-#include <string>
-
 namespace TextureManager
 {
-    std::map<std::string, sf::Texture> textures;
+    std::unordered_map<std::string, sf::Texture> textures;
 
     sf::Texture &getTexture(const std::string &path)
     {

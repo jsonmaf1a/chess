@@ -2,10 +2,11 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
-#include <map>
+#include <string>
+#include <unordered_map>
 
 namespace TextureManager
 {
-    extern std::map<std::string, sf::Texture> textures;
+    extern std::unordered_map<std::string, sf::Texture> textures;
     sf::Texture &getTexture(const std::string &path);
 } // namespace TextureManager
