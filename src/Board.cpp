@@ -1,27 +1,99 @@
 #include "Board.hpp"
+#include "pieces/Bishop.hpp"
+#include "pieces/King.hpp"
+#include "pieces/Knight.hpp"
+#include "pieces/Pawn.hpp"
+#include "pieces/Queen.hpp"
+#include "pieces/Rook.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System.hpp>
+#include <SFML/System/Vector2.hpp>
+
+Board::Board(sf::RenderWindow &target)
+    : target(target)
+{
+    initializePieces();
+}
 
 void Board::draw()
 {
-    for(int row = 0; row < gridSize; row++)
+    for(int row = 0; row < GRID_SIZE; row++)
     {
-        for(int col = 0; col < gridSize; col++)
+        for(int col = 0; col < GRID_SIZE; col++)
         {
-            sf::RectangleShape rect(sf::Vector2f(cellSize, cellSize));
-
-            rect.setPosition(sf::Vector2f(col * cellSize, row * cellSize));
-
-            sf::Color cellColor = getCellColor(row + col);
-            rect.setFillColor(cellColor);
-
-            target.draw(rect);
+            sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+            cell.setPosition({col * CELL_SIZE * 1.0f, row * CELL_SIZE * 1.0f});
+            cell.setFillColor(getCellColor(row + col));
+            target.draw(cell);
         }
+    }
+
+    for(auto &piece : pieces)
+    {
+        piece->draw(target);
     }
 }
 
-sf::Color Board::getCellColor(uint8_t position)
+void Board::initializePieces()
+{
+    // =============== Pawns =================
+    for(int col = 0; col < GRID_SIZE; col++)
+    {
+        pieces.push_back(
+            std::make_shared<Pawn>(sf::Vector2i(col, 6), PieceColor::White));
+        pieces.push_back(
+            std::make_shared<Pawn>(sf::Vector2i(col, 1), PieceColor::Black));
+    }
+
+    // =============== Rooks =================
+    pieces.push_back(
+        std::make_shared<Rook>(sf::Vector2i(0, 0), PieceColor::Black));
+    pieces.push_back(
+        std::make_shared<Rook>(sf::Vector2i(7, 0), PieceColor::Black));
+
+    pieces.push_back(
+        std::make_shared<Rook>(sf::Vector2i(0, 7), PieceColor::White));
+    pieces.push_back(
+        std::make_shared<Rook>(sf::Vector2i(7, 7), PieceColor::White));
+
+    // =============== Knights ===============
+    pieces.push_back(
+        std::make_shared<Knight>(sf::Vector2i(1, 0), PieceColor::Black));
+    pieces.push_back(
+        std::make_shared<Knight>(sf::Vector2i(6, 0), PieceColor::Black));
+
+    pieces.push_back(
+        std::make_shared<Knight>(sf::Vector2i(1, 7), PieceColor::White));
+    pieces.push_back(
+        std::make_shared<Knight>(sf::Vector2i(6, 7), PieceColor::White));
+
+    // =============== Bishops ===============
+    pieces.push_back(
+        std::make_shared<Bishop>(sf::Vector2i(2, 0), PieceColor::Black));
+    pieces.push_back(
+        std::make_shared<Bishop>(sf::Vector2i(5, 0), PieceColor::Black));
+
+    pieces.push_back(
+        std::make_shared<Bishop>(sf::Vector2i(2, 7), PieceColor::White));
+    pieces.push_back(
+        std::make_shared<Bishop>(sf::Vector2i(5, 7), PieceColor::White));
+
+    // =============== Queens =================
+    pieces.push_back(
+        std::make_shared<Queen>(sf::Vector2i(3, 0), PieceColor::Black));
+    pieces.push_back(
+        std::make_shared<Queen>(sf::Vector2i(3, 7), PieceColor::White));
+
+    // =============== Kings ==================
+    pieces.push_back(
+        std::make_shared<King>(sf::Vector2i(4, 0), PieceColor::Black));
+    pieces.push_back(
+        std::make_shared<King>(sf::Vector2i(4, 7), PieceColor::White));
+}
+
+sf::Color Board::getCellColor(int position)
 {
     return position % 2 == 0 ? colorLight : colorDark;
 };

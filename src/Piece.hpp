@@ -1,9 +1,12 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System.hpp>
 
-#include <algorithm>
+#include <SFML/System/Vector2.hpp>
 #include <vector>
 
 enum class PieceType
@@ -14,7 +17,6 @@ enum class PieceType
     Bishop,
     Queen,
     King,
-    None
 };
 enum class PieceColor
 {
@@ -26,60 +28,40 @@ enum class PieceColor
 class Piece
 {
   protected:
+    static constexpr const int SPRITE_SIZE = 64;
+    static constexpr const float SCALE = 1.0f;
+    static constexpr const char *BASE_TEXTURES_PATH =
+        "./assets/textures/pieces/";
+
+    const PieceType type;
+
+    const float yOffsetFactor = 0.05f;
+
     PieceColor color;
     sf::Vector2i position;
+    sf::Texture texture;
     sf::Sprite sprite;
 
     bool wasMoved = false;
 
-    static constexpr int SPRITE_SIZE = 64;
+    static std::string getPieceTexturePath(PieceType type, PieceColor color);
 
   public:
-    Piece(sf::Vector2i position, PieceColor color, const sf::Texture &texture)
-        : position(position), color(color), sprite(texture)
-    {
-        sprite.setPosition({static_cast<float>(position.x * 64),
-                            static_cast<float>(position.y * 64)});
-    };
-    virtual ~Piece() = default;
+    Piece(PieceType type, sf::Vector2i position, PieceColor color);
+    ~Piece() = default;
 
-    // NOTE: (color == PieceColor::White && position.y == 6) || (color ==
-    // PieceColor::Black && position.y == 1)
     virtual std::vector<sf::Vector2i> getValidMoves() const = 0;
 
-    virtual void draw(sf::RenderWindow &window) const
-    {
-        window.draw(sprite);
-    };
+    void draw(sf::RenderTarget &target) const;
 
-    virtual void moveTo(sf::Vector2i newPosition)
-    {
-        position = newPosition;
-        sprite.setPosition({static_cast<float>(newPosition.x * SPRITE_SIZE),
-                            static_cast<float>(newPosition.y * SPRITE_SIZE)});
-        wasMoved = true;
-    };
+    void moveTo(sf::Vector2i newPosition);
+    bool isValidMove(sf::Vector2i newPosition) const;
 
-    bool isValidMove(sf::Vector2i newPosition) const
-    {
-        auto moves = getValidMoves();
-        auto it = std::find(moves.begin(), moves.end(), newPosition);
+    sf::Vector2i getPosition() const;
+    PieceColor getColor() const;
 
-        return it != moves.end();
-    };
-
-    sf::Vector2i getPosition() const
-    {
-        return position;
-    }
-
-    PieceColor getColor() const
-    {
-        return color;
-    }
-
-    bool isInInitialPosition() const
-    {
-        return !wasMoved;
-    };
+  private:
+    template <typename T>
+    sf::Vector2f calculateSpritePosition(sf::Vector2<T> position) const;
+    static std::string pieceTypeToString(PieceType type);
 };

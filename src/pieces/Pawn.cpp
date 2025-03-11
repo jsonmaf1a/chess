@@ -1,7 +1,5 @@
 #include "Pawn.hpp"
 
-#include <vector>
-
 // TODO:
 // * Capturing diagonally
 // * En passant
@@ -10,6 +8,7 @@
 std::vector<sf::Vector2i> Pawn::getValidMoves() const
 {
     std::vector<sf::Vector2i> moves;
+
     int direction = (color == PieceColor::White) ? -1 : 1;
 
     int newY = position.y + direction;
@@ -18,7 +17,7 @@ std::vector<sf::Vector2i> Pawn::getValidMoves() const
         moves.push_back({position.x, newY});
     }
 
-    if(isInInitialPosition())
+    if(!wasMoved)
     {
         int newY = position.y + 2 * direction;
         if(newY >= 0 && newY < 8)

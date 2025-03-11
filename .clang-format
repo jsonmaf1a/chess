@@ -8,6 +8,7 @@ BreakAfterReturnType: None
 IndentCaseBlocks: false
 IndentCaseLabels: true
 # IndentExportBlock: true
+BreakConstructorInitializers: BeforeComma
 IndentExternBlock: AfterExternBlock
 NamespaceIndentation: All
 UseTab: Never

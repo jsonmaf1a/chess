@@ -4,38 +4,51 @@
 #include <SFML/Window.hpp>
 #include <optional>
 
+Window::Window(uint width, uint height, const std::string &title)
+    : width(width)
+    , height(height)
+    , title(title)
+    , is_initialized(false)
+{
+    target.create(sf::VideoMode({width, height}), title);
+    is_initialized = true;
+}
+
+Window::~Window()
+{
+    if(is_initialized)
+    {
+        target.close();
+    }
+
+    is_initialized = false;
+}
+
 sf::RenderWindow &Window::getRenderWindow()
 {
-    return rw;
+    return target;
 }
 
 void Window::handleEvents()
 {
-    // while(const std::optional event = rw.pollEvent())
-    //     {
-    //         if(event->is<sf::Event::Closed>()
-    //            || isKeyPressed(event, sf::Keyboard::Key::Escape))
-    //             {
-    //                 rw.close();
-    //             }
-    //     }
+    using Event = sf::Event;
 
-    rw.handleEvents([&](const sf::Event::Closed &) { rw.close(); },
-                    [&](const sf::Event::KeyPressed &keyPressEvent) {
-                        handleKeyPress(keyPressEvent);
-                    });
+    target.handleEvents([&](const Event::Closed &) { target.close(); },
+                        [&](const Event::KeyPressed &keyPressEvent) {
+                            handleKeyPress(keyPressEvent);
+                        });
 }
 
 void Window::handleKeyPress(const std::optional<sf::Event::KeyPressed> &event)
 {
-    if(!event.has_value())
+    if(!event)
         return;
 
     switch(event->code)
     {
-
         case sf::Keyboard::Key::Escape:
-            rw.close();
+            target.close();
+            break;
 
         default:
             break;

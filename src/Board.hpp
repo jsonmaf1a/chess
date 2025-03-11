@@ -1,26 +1,28 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <cstdint>
+
+#include "Piece.hpp"
 
 class Board
 {
   public:
-    Board(sf::RenderWindow &target) : gridSize(8), cellSize(100), target(target)
-    {}
+    static constexpr const int GRID_SIZE = 8;
+    static constexpr const int CELL_SIZE = 100;
 
-    ~Board() {};
+    Board(sf::RenderWindow &target);
+    ~Board() = default;
 
     void draw();
+    void initializePieces();
 
   private:
-    sf::RenderWindow &target;
-
-    const uint8_t gridSize;
-    const uint8_t cellSize;
+    sf::RenderTarget &target;
 
     const sf::Color colorDark = {119, 163, 169, 255};
     const sf::Color colorLight = {220, 220, 220, 255};
 
-    sf::Color getCellColor(uint8_t position);
+    std::vector<std::shared_ptr<Piece>> pieces;
+
+    sf::Color getCellColor(int position);
 };
