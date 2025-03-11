@@ -1,9 +1,5 @@
 #include "Window.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <optional>
-
 Window::Window(uint width, uint height, const std::string &title)
     : width(width)
     , height(height)

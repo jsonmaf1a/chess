@@ -2,8 +2,7 @@
 #include "Board.hpp"
 #include "utils/TextureManager.hpp"
 
-#include <SFML/System/Vector2.hpp>
-#include <algorithm>
+#include <SFML/Graphics/RenderTarget.hpp>
 
 Piece::Piece(PieceType type, sf::Vector2i position, PieceColor color)
     : position(position)

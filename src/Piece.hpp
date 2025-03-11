@@ -1,12 +1,7 @@
 #pragma once
 
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/System.hpp>
-
-#include <SFML/System/Vector2.hpp>
 #include <vector>
 
 enum class PieceType

@@ -2,11 +2,6 @@
 
 #include "Board.hpp"
 #include "Piece.hpp"
-#include <SFML/System/Vector2.hpp>
-
-#include <memory>
-#include <optional>
-#include <vector>
 
 enum class Player
 {

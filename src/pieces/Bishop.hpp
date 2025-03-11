@@ -2,9 +2,6 @@
 
 #include "../Piece.hpp"
 
-#include <SFML/System.hpp>
-#include <vector>
-
 class Bishop : public Piece
 {
   private:

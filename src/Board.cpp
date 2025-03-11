@@ -6,12 +6,10 @@
 #include "pieces/Queen.hpp"
 #include "pieces/Rook.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/System.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
-Board::Board(sf::RenderWindow &target)
+Board::Board(sf::RenderTarget &target)
     : target(target)
 {
     initializePieces();

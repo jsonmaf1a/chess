@@ -1,7 +1,5 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
 #include "Piece.hpp"
 
 class Board
@@ -10,7 +8,7 @@ class Board
     static constexpr const int GRID_SIZE = 8;
     static constexpr const int CELL_SIZE = 100;
 
-    Board(sf::RenderWindow &target);
+    Board(sf::RenderTarget &target);
     ~Board() = default;
 
     void draw();
