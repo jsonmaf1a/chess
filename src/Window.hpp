@@ -14,11 +14,11 @@ class Window
 
     sf::RenderWindow &getRenderWindow();
 
-    void handleEvents();
-    void handleKeyPress(const std::optional<sf::Event::KeyPressed> &event);
+    // void handleEvents();
+    void handleKeyPress(const sf::Event::KeyPressed &event);
 
   private:
-    sf::RenderWindow target;
+    sf::RenderWindow renderWindow;
 
     const uint width;
     const uint height;

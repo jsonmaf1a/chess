@@ -10,6 +10,8 @@ namespace TextureManager
         if(it == textures.end())
         {
             sf::Texture texture;
+            texture.setSmooth(false);
+
             if(!texture.loadFromFile(path))
             {
                 throw std::runtime_error("Failed to load texture: " + path);

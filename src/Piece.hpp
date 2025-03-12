@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utils/UIComponent.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <vector>
@@ -20,17 +21,15 @@ enum class PieceColor
     Unknown
 };
 
-class Piece
+class Piece : public UIComponent
 {
   protected:
-    static constexpr const int SPRITE_SIZE = 64;
+    static constexpr const int SPRITE_SIZE = 100;
     static constexpr const float SCALE = 1.0f;
     static constexpr const char *BASE_TEXTURES_PATH =
         "./assets/textures/pieces/";
 
     const PieceType type;
-
-    const float yOffsetFactor = 0.05f;
 
     PieceColor color;
     sf::Vector2i position;
@@ -47,8 +46,7 @@ class Piece
 
     virtual std::vector<sf::Vector2i> getValidMoves() const = 0;
 
-    void draw(sf::RenderTarget &target) const;
-
+    virtual void drawSelf(sf::RenderWindow &window) override;
     void moveTo(sf::Vector2i newPosition);
     bool isValidMove(sf::Vector2i newPosition) const;
 

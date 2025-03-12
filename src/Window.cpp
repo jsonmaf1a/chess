@@ -6,7 +6,7 @@ Window::Window(uint width, uint height, const std::string &title)
     , title(title)
     , is_initialized(false)
 {
-    target.create(sf::VideoMode({width, height}), title);
+    renderWindow.create(sf::VideoMode({width, height}), title);
     is_initialized = true;
 }
 
@@ -14,7 +14,7 @@ Window::~Window()
 {
     if(is_initialized)
     {
-        target.close();
+        renderWindow.close();
     }
 
     is_initialized = false;
@@ -22,28 +22,19 @@ Window::~Window()
 
 sf::RenderWindow &Window::getRenderWindow()
 {
-    return target;
+    return renderWindow;
 }
 
-void Window::handleEvents()
+// void Window::handleEvents()
+// {
+// }
+
+void Window::handleKeyPress(const sf::Event::KeyPressed &event)
 {
-    using Event = sf::Event;
-
-    target.handleEvents([&](const Event::Closed &) { target.close(); },
-                        [&](const Event::KeyPressed &keyPressEvent) {
-                            handleKeyPress(keyPressEvent);
-                        });
-}
-
-void Window::handleKeyPress(const std::optional<sf::Event::KeyPressed> &event)
-{
-    if(!event)
-        return;
-
-    switch(event->code)
+    switch(event.code)
     {
         case sf::Keyboard::Key::Escape:
-            target.close();
+            renderWindow.close();
             break;
 
         default:

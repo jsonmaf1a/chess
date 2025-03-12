@@ -5,17 +5,18 @@
 #include "pieces/Pawn.hpp"
 #include "pieces/Queen.hpp"
 #include "pieces/Rook.hpp"
+#include <iostream>
 
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-
-Board::Board(sf::RenderTarget &target)
-    : target(target)
+Board::Board(sf::FloatRect bounds, sf::RenderWindow &target)
+    : boardView(bounds)
+    , UIComponent(bounds)
 {
+    boardView.setViewport(sf::FloatRect({0.3f, 0.f}, {0.7f, 1.f}));
+
     initializePieces();
 }
 
-void Board::draw()
+void Board::drawSelf(sf::RenderWindow &window)
 {
     for(int row = 0; row < GRID_SIZE; row++)
     {
@@ -24,17 +25,41 @@ void Board::draw()
             sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
             cell.setPosition({col * CELL_SIZE * 1.0f, row * CELL_SIZE * 1.0f});
             cell.setFillColor(getCellColor(row + col));
-            target.draw(cell);
-        }
-    }
 
-    for(auto &piece : pieces)
-    {
-        piece->draw(target);
+            window.draw(cell);
+        }
     }
 }
 
+EventResult Board::handleSelfEvent(const sf::Event &event)
+{
+    if(event.is<sf::Event::MouseMoved>())
+    {
+        const auto mouseMoved = event.getIf<sf::Event::MouseMoved>();
+        std::cout << "MouseMove event: "
+                  << "x: " << mouseMoved->position.x << "\t"
+                  << "y: " << mouseMoved->position.y << "\n";
+        return EventResult::Handled;
+    }
+    else
+    {
+        std::cout << "penis" << "\n";
+    }
+
+    return EventResult::Ignored;
+}
+
 void Board::initializePieces()
+{
+    createPieces();
+
+    for(auto &piece : pieces)
+    {
+        addChild(piece);
+    }
+}
+
+void Board::createPieces()
 {
     // =============== Pawns =================
     for(char file = 'A'; file <= 'H'; file++)
@@ -90,8 +115,14 @@ void Board::initializePieces()
 
 sf::Color Board::getCellColor(int cellPosition) const
 {
-    return cellPosition % 2 == 0 ? colorLight : colorDark;
+    return cellPosition % 2 == 0 ? colorCellLight : colorCellDark;
 };
+
+sf::Vector2f Board::mapToViewCoords(sf::RenderWindow &renderWindow,
+                                    sf::Vector2i mousePos)
+{
+    return renderWindow.mapPixelToCoords(mousePos, boardView);
+}
 
 std::string Board::toChessNotation(const sf::Vector2i &position) const
 {
