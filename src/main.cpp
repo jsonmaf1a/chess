@@ -1,12 +1,14 @@
 #include "Window.hpp"
+#include "shared/FontManager.hpp"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 
 int main()
 {
-    Window window;
+    FontManager::loadFonts();
 
+    Window window;
     while(window.isOpen())
     {
         window.pollEvents();

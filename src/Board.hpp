@@ -31,10 +31,10 @@ class Board : public UIComponent
     int hoveredCol = -1;
 
     // TODO: intoduce theme manager and use it to get colors and shit
-    static constexpr const sf::Color colorCellDark = {119, 163, 169, 255};
-    static constexpr const sf::Color colorCellLight = {220, 220, 220, 255};
+    static constexpr const sf::Color colorDark = {119, 163, 169, 255};
+    static constexpr const sf::Color colorLight = {220, 220, 220, 255};
 
-    void drawLabels();
+    void drawLabels(sf::RenderWindow &window);
     sf::Vector2f getNormalizedMousePosition(const sf::Vector2i &mousePos,
                                             const sf::RenderWindow &window);
     sf::Color getCellColor(int position) const;

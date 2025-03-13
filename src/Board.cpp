@@ -5,6 +5,7 @@
 #include "pieces/Pawn.hpp"
 #include "pieces/Queen.hpp"
 #include "pieces/Rook.hpp"
+#include "shared/FontManager.hpp"
 #include "shared/Notation.hpp"
 #include <iostream>
 
@@ -42,10 +43,37 @@ void Board::drawSelf(sf::RenderWindow &window)
         }
     }
 
-    drawLabels();
+    drawLabels(window);
 }
 
-void drawLabels() {}
+void Board::drawLabels(sf::RenderWindow &window)
+{
+    const sf::Font &font = FontManager::getFont(FontStyle::Semibold);
+    const int fontSize = 12;
+
+    for(int i = 0; i < GRID_SIZE; i++)
+    {
+        sf::Vector2f filePos((i + 1) * CELL_SIZE - 14,
+                             GRID_SIZE * CELL_SIZE - 20);
+        sf::Vector2f rankPos(4, (GRID_SIZE - 1 - i) * CELL_SIZE + 2);
+
+        bool isFileOnDark = ((GRID_SIZE - 1) + i) % 2 != 0;
+        bool isRankOnDark = ((GRID_SIZE - 1 - i) % 2 != 0);
+
+        sf::Color fileTextColor = isFileOnDark ? colorLight : colorDark;
+        sf::Color rankTextColor = isRankOnDark ? colorLight : colorDark;
+
+        sf::Text fileLabel(font, std::string(1, 'a' + i), fontSize);
+        fileLabel.setFillColor(fileTextColor);
+        fileLabel.setPosition(filePos);
+        window.draw(fileLabel);
+
+        sf::Text rankLabel(font, std::to_string(8 - i), fontSize);
+        rankLabel.setFillColor(rankTextColor);
+        rankLabel.setPosition(rankPos);
+        window.draw(rankLabel);
+    }
+}
 
 EventResult Board::handleSelfEvent(const EventContext &eventCtx)
 {
@@ -162,7 +190,7 @@ void Board::createPieces()
 
 sf::Color Board::getCellColor(int cellPosition) const
 {
-    return cellPosition % 2 == 0 ? colorCellLight : colorCellDark;
+    return cellPosition % 2 == 0 ? colorLight : colorDark;
 };
 
 void Board::setHoveredCell(sf::Vector2i position)

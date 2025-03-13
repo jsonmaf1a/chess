@@ -30,7 +30,6 @@ class UIComponent
     void setEnabled(bool enabled);
     bool isEnabled() const;
     void setBounds(const sf::FloatRect &bounds);
-    void drawBoundingBox();
     const sf::FloatRect &getBounds() const;
 
     bool isMouseOverViewport(sf::Vector2f normalizedMousePos);

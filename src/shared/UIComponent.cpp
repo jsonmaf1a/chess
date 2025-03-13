@@ -30,17 +30,6 @@ void UIComponent::draw(sf::RenderWindow &window)
     }
 }
 
-void UIComponent::drawBoundingBox()
-{
-    sf::RectangleShape boundingBox(bounds.size);
-
-    boundingBox.setPosition({bounds.position});
-
-    boundingBox.setOutlineColor(sf::Color::Green);
-    boundingBox.setFillColor(sf::Color::Transparent);
-    boundingBox.setOutlineThickness(2.f);
-}
-
 EventResult UIComponent::handleEvent(const EventContext &event)
 {
     if(!visible || !enabled)
@@ -65,32 +54,17 @@ bool UIComponent::isMouseOverViewport(sf::Vector2f normalizedMousePos)
     return isViewportContainsPoint(normalizedMousePos);
 }
 
-void UIComponent::setVisible(bool visible)
-{
-    this->visible = visible;
-}
+void UIComponent::setVisible(bool visible) { this->visible = visible; }
 
-bool UIComponent::isVisible() const
-{
-    return visible;
-}
+bool UIComponent::isVisible() const { return visible; }
 
-void UIComponent::setEnabled(bool enabled)
-{
-    this->enabled = enabled;
-}
+void UIComponent::setEnabled(bool enabled) { this->enabled = enabled; }
 
-bool UIComponent::isEnabled() const
-{
-    return enabled;
-}
+bool UIComponent::isEnabled() const { return enabled; }
 
 void UIComponent::setBounds(const sf::FloatRect &bounds)
 {
     this->bounds = bounds;
 }
 
-const sf::FloatRect &UIComponent::getBounds() const
-{
-    return bounds;
-}
+const sf::FloatRect &UIComponent::getBounds() const { return bounds; }

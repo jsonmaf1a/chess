@@ -15,6 +15,7 @@ class CursorManager
         defaultCursor = std::make_unique<sf::Cursor>(
             *sf::Cursor::createFromSystem(sf::Cursor::Type::Arrow));
     }
+    ~CursorManager() = default;
 
     void setHandCursor() { window.setMouseCursor(*handCursor); }
     void resetCursor() { window.setMouseCursor(*defaultCursor); }
