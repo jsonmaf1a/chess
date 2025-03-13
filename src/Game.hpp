@@ -2,6 +2,7 @@
 
 #include "Board.hpp"
 #include "Piece.hpp"
+#include "UIManager.hpp"
 
 enum class Player
 {
@@ -26,8 +27,19 @@ struct Move
 // * - lose
 class Game
 {
+  public:
+    Game(sf::RenderWindow &window, UIManager uiManager, Board board)
+        : window(window)
+        , board(board)
+    {}
+    ~Game();
+
+    void update();
+
   private:
+    sf::RenderWindow &window;
     Board board;
+
     std::vector<std::unique_ptr<Piece>> whitePieces;
     std::vector<std::unique_ptr<Piece>> blackPieces;
 
@@ -35,6 +47,4 @@ class Game
     Player currentPlayer;
 
     std::vector<std::unique_ptr<Move>> moves;
-
-  public:
 };

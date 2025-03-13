@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/UIComponent.hpp"
+#include "shared/UIComponent.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <vector>

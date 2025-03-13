@@ -15,7 +15,7 @@ void UIManager::removeComponent(std::shared_ptr<UIComponent> component)
     }
 }
 
-void UIManager::handleEvent(const sf::Event &event)
+void UIManager::handleEvent(const EventContext &event)
 {
     for(auto it = rootComponents.rbegin(); it != rootComponents.rend(); ++it)
     {

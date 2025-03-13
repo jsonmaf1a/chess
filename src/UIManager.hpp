@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/UIComponent.hpp"
+#include "shared/UIComponent.hpp"
 #include <memory>
 #include <vector>
 
@@ -12,6 +12,6 @@ class UIManager
   public:
     void addComponent(std::shared_ptr<UIComponent> component);
     void removeComponent(std::shared_ptr<UIComponent> component);
-    void handleEvent(const sf::Event &event);
+    void handleEvent(const EventContext &event);
     void draw(sf::RenderWindow &window);
 };

@@ -5,45 +5,85 @@
 #include "pieces/Pawn.hpp"
 #include "pieces/Queen.hpp"
 #include "pieces/Rook.hpp"
+#include "shared/Notation.hpp"
 #include <iostream>
 
-Board::Board(sf::FloatRect bounds, sf::RenderWindow &target)
-    : boardView(bounds)
-    , UIComponent(bounds)
+Board::Board(sf::RenderWindow &target, sf::FloatRect bounds,
+             sf::FloatRect viewport)
+    : UIComponent(bounds)
 {
-    boardView.setViewport(sf::FloatRect({0.3f, 0.f}, {0.7f, 1.f}));
+    view.setViewport(viewport);
 
     initializePieces();
 }
 
 void Board::drawSelf(sf::RenderWindow &window)
 {
+    window.setView(view);
+
     for(int row = 0; row < GRID_SIZE; row++)
     {
         for(int col = 0; col < GRID_SIZE; col++)
         {
             sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-            cell.setPosition({col * CELL_SIZE * 1.0f, row * CELL_SIZE * 1.0f});
-            cell.setFillColor(getCellColor(row + col));
+            cell.setPosition({col * CELL_SIZE, row * CELL_SIZE});
 
+            sf::Color cellColor = getCellColor(row + col);
+
+            if(row == hoveredRow && col == hoveredCol)
+            {
+                cellColor.r = std::min(255, cellColor.r - 10);
+                cellColor.g = std::min(255, cellColor.g - 10);
+                cellColor.b = std::min(255, cellColor.b - 10);
+            }
+
+            cell.setFillColor(cellColor);
             window.draw(cell);
         }
     }
+
+    drawLabels();
 }
 
-EventResult Board::handleSelfEvent(const sf::Event &event)
+void drawLabels() {}
+
+EventResult Board::handleSelfEvent(const EventContext &eventCtx)
 {
-    if(event.is<sf::Event::MouseMoved>())
+    if(eventCtx.event.is<sf::Event::MouseMoved>())
     {
-        const auto mouseMoved = event.getIf<sf::Event::MouseMoved>();
-        std::cout << "MouseMove event: "
-                  << "x: " << mouseMoved->position.x << "\t"
-                  << "y: " << mouseMoved->position.y << "\n";
-        return EventResult::Handled;
-    }
-    else
-    {
-        std::cout << "penis" << "\n";
+        const auto mouseMoved = eventCtx.event.getIf<sf::Event::MouseMoved>();
+        const auto &window = eventCtx.window;
+        auto &cursorManager = eventCtx.cursorManager;
+
+        const auto mousePos = mouseMoved->position;
+
+        sf::Vector2f normalizedMousePos =
+            getNormalizedMousePosition(mousePos, window);
+
+        if(!isMouseOverViewport(normalizedMousePos))
+        {
+            cursorManager.resetCursor();
+            resetHoveredCell();
+
+            return EventResult::Handled;
+        }
+
+        sf::Vector2f localMousePos = window.mapPixelToCoords(mousePos, view);
+
+        int col = localMousePos.x / CELL_SIZE;
+        int row = localMousePos.y / CELL_SIZE;
+
+        if(isMouseOverCell({col, row}))
+        {
+            cursorManager.setHandCursor();
+            setHoveredCell({row, col});
+
+            std::cout << "Board mousemove: "
+                      << "row: " << row << "\t"
+                      << "col: " << col << "\n";
+
+            return EventResult::Consumed;
+        }
     }
 
     return EventResult::Ignored;
@@ -61,56 +101,63 @@ void Board::initializePieces()
 
 void Board::createPieces()
 {
+    static constexpr const int WHITE_PAWNS_ROW = 2;
+    static constexpr const int BLACK_PAWNS_ROW = 7;
+
     // =============== Pawns =================
     for(char file = 'A'; file <= 'H'; file++)
     {
-        pieces.emplace_back(std::make_shared<Pawn>(
-            fromChessNotation(std::format("{}2", file)), PieceColor::White));
-        pieces.emplace_back(std::make_shared<Pawn>(
-            fromChessNotation(std::format("{}7", file)), PieceColor::Black));
+        pieces.push_back(
+            std::make_shared<Pawn>(Notation::fromChessNotation(std::format(
+                                       "{}{}", file, WHITE_PAWNS_ROW)),
+                                   PieceColor::White));
+        pieces.push_back(
+            std::make_shared<Pawn>(Notation::fromChessNotation(std::format(
+                                       "{}{}", file, BLACK_PAWNS_ROW)),
+                                   PieceColor::Black));
     }
 
     // =============== Rooks =================
-    pieces.push_back(
-        std::make_shared<Rook>(fromChessNotation("A1"), PieceColor::White));
-    pieces.push_back(
-        std::make_shared<Rook>(fromChessNotation("H1"), PieceColor::White));
-    pieces.push_back(
-        std::make_shared<Rook>(fromChessNotation("A8"), PieceColor::Black));
-    pieces.push_back(
-        std::make_shared<Rook>(fromChessNotation("H8"), PieceColor::Black));
+    pieces.push_back(std::make_shared<Rook>(Notation::fromChessNotation("A1"),
+                                            PieceColor::White));
+    pieces.push_back(std::make_shared<Rook>(Notation::fromChessNotation("H1"),
+                                            PieceColor::White));
+    pieces.push_back(std::make_shared<Rook>(Notation::fromChessNotation("A8"),
+                                            PieceColor::Black));
+    pieces.push_back(std::make_shared<Rook>(Notation::fromChessNotation("H8"),
+                                            PieceColor::Black));
 
     // =============== Knights ===============
-    pieces.push_back(
-        std::make_shared<Knight>(fromChessNotation("B1"), PieceColor::White));
-    pieces.push_back(
-        std::make_shared<Knight>(fromChessNotation("G1"), PieceColor::White));
-    pieces.push_back(
-        std::make_shared<Knight>(fromChessNotation("B8"), PieceColor::Black));
-    pieces.push_back(
-        std::make_shared<Knight>(fromChessNotation("G8"), PieceColor::Black));
+    pieces.push_back(std::make_shared<Knight>(Notation::fromChessNotation("B1"),
+                                              PieceColor::White));
+    pieces.push_back(std::make_shared<Knight>(Notation::fromChessNotation("G1"),
+                                              PieceColor::White));
+    pieces.push_back(std::make_shared<Knight>(Notation::fromChessNotation("B8"),
+                                              PieceColor::Black));
+    pieces.push_back(std::make_shared<Knight>(Notation::fromChessNotation("G8"),
+                                              PieceColor::Black));
 
     // =============== Bishops ===============
-    pieces.push_back(
-        std::make_shared<Bishop>(fromChessNotation("C1"), PieceColor::White));
-    pieces.push_back(
-        std::make_shared<Bishop>(fromChessNotation("F1"), PieceColor::White));
-    pieces.push_back(
-        std::make_shared<Bishop>(fromChessNotation("C8"), PieceColor::Black));
-    pieces.push_back(
-        std::make_shared<Bishop>(fromChessNotation("F8"), PieceColor::Black));
+    pieces.push_back(std::make_shared<Bishop>(Notation::fromChessNotation("C1"),
+                                              PieceColor::White));
+    pieces.push_back(std::make_shared<Bishop>(Notation::fromChessNotation("F1"),
+                                              PieceColor::White));
+    pieces.push_back(std::make_shared<Bishop>(Notation::fromChessNotation("C8"),
+                                              PieceColor::Black));
+    pieces.push_back(std::make_shared<Bishop>(Notation::fromChessNotation("F8"),
+                                              PieceColor::Black));
 
     // =============== Queens =================
-    pieces.push_back(
-        std::make_shared<Queen>(fromChessNotation("D1"), PieceColor::White));
-    pieces.push_back(
-        std::make_shared<Queen>(fromChessNotation("D8"), PieceColor::Black));
+    pieces.push_back(std::make_shared<Queen>(Notation::fromChessNotation("D1"),
+                                             PieceColor::White));
+    pieces.push_back(std::make_shared<Queen>(Notation::fromChessNotation("D8"),
+                                             PieceColor::Black));
 
     // =============== Kings ==================
-    pieces.push_back(
-        std::make_shared<King>(fromChessNotation("E1"), PieceColor::White));
-    pieces.push_back(
-        std::make_shared<King>(fromChessNotation("E8"), PieceColor::Black));
+    pieces.push_back(std::make_shared<King>(Notation::fromChessNotation("E1"),
+                                            PieceColor::White));
+    pieces.push_back(std::make_shared<King>(Notation::fromChessNotation("E8"),
+                                            PieceColor::Black));
 }
 
 sf::Color Board::getCellColor(int cellPosition) const
@@ -118,27 +165,29 @@ sf::Color Board::getCellColor(int cellPosition) const
     return cellPosition % 2 == 0 ? colorCellLight : colorCellDark;
 };
 
-sf::Vector2f Board::mapToViewCoords(sf::RenderWindow &renderWindow,
-                                    sf::Vector2i mousePos)
+void Board::setHoveredCell(sf::Vector2i position)
 {
-    return renderWindow.mapPixelToCoords(mousePos, boardView);
+    hoveredRow = position.x;
+    hoveredCol = position.y;
+};
+
+void Board::resetHoveredCell()
+{
+    hoveredRow = -1;
+    hoveredCol = -1;
+};
+
+bool Board::isMouseOverCell(sf::Vector2i mousePos)
+{
+    int col = mousePos.x / CELL_SIZE;
+    int row = mousePos.y / CELL_SIZE;
+
+    return row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE;
 }
 
-std::string Board::toChessNotation(const sf::Vector2i &position) const
+sf::Vector2f Board::getNormalizedMousePosition(const sf::Vector2i &mousePos,
+                                               const sf::RenderWindow &window)
 {
-    char file = 'A' + position.x;
-    char rank = '1' + (7 - position.y);
-
-    return std::string(1, file) + rank;
-}
-
-sf::Vector2i Board::fromChessNotation(const std::string &notation) const
-{
-    if(notation.length() != 2)
-        throw std::invalid_argument("Invalid notation");
-
-    int x = notation[0] - 'A';
-    int y = 7 - (notation[1] - '1');
-
-    return {x, y};
+    return {static_cast<float>(mousePos.x) / window.getSize().x,
+            static_cast<float>(mousePos.y) / window.getSize().y};
 }

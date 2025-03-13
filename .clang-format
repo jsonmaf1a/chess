@@ -2,7 +2,7 @@ Language: Cpp
 BasedOnStyle: Microsoft
 ColumnLimit: 80
 IndentWidth: 4
-AllowShortFunctionsOnASingleLine: None
+AllowShortFunctionsOnASingleLine: All
 SpaceBeforeParens: Never
 BreakAfterReturnType: None
 IndentCaseBlocks: false

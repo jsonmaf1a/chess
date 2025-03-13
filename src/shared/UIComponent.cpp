@@ -1,25 +1,20 @@
 #include "UIComponent.hpp"
-#include <iostream>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 void UIComponent::addChild(std::shared_ptr<UIComponent> child)
 {
     child->parent = this;
-    childrens.push_back(child);
+    children.push_back(child);
 }
 
 void UIComponent::removeChild(std::shared_ptr<UIComponent> child)
 {
-    auto it = std::find(childrens.begin(), childrens.begin(), child);
-    if(it != childrens.end())
+    auto it = std::find(children.begin(), children.begin(), child);
+    if(it != children.end())
     {
         (*it)->parent = nullptr;
-        childrens.erase(it);
+        children.erase(it);
     }
-}
-
-bool UIComponent::contains(float x, float y) const
-{
-    return visible && enabled && bounds.contains({x, y});
 }
 
 void UIComponent::draw(sf::RenderWindow &window)
@@ -29,20 +24,31 @@ void UIComponent::draw(sf::RenderWindow &window)
 
     drawSelf(window);
 
-    for(auto &child : childrens)
+    for(auto &child : children)
     {
         child->draw(window);
     }
 }
 
-EventResult UIComponent::handleEvent(const sf::Event &event)
+void UIComponent::drawBoundingBox()
+{
+    sf::RectangleShape boundingBox(bounds.size);
+
+    boundingBox.setPosition({bounds.position});
+
+    boundingBox.setOutlineColor(sf::Color::Green);
+    boundingBox.setFillColor(sf::Color::Transparent);
+    boundingBox.setOutlineThickness(2.f);
+}
+
+EventResult UIComponent::handleEvent(const EventContext &event)
 {
     if(!visible || !enabled)
         return EventResult::Ignored;
 
     // First, give children a chance to handle the event (in reverse order
     // for proper z-ordering)
-    for(auto it = childrens.rbegin(); it != childrens.rend(); ++it)
+    for(auto it = children.rbegin(); it != children.rend(); ++it)
     {
         EventResult result = (*it)->handleEvent(event);
         if(result == EventResult::Consumed)
@@ -52,6 +58,11 @@ EventResult UIComponent::handleEvent(const sf::Event &event)
     }
 
     return handleSelfEvent(event);
+}
+
+bool UIComponent::isMouseOverViewport(sf::Vector2f normalizedMousePos)
+{
+    return isViewportContainsPoint(normalizedMousePos);
 }
 
 void UIComponent::setVisible(bool visible)

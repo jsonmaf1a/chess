@@ -1,6 +1,6 @@
 #include "Piece.hpp"
 #include "Board.hpp"
-#include "utils/TextureManager.hpp"
+#include "shared/TextureManager.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <math.h>
