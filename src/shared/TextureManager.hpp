@@ -6,6 +6,6 @@
 
 namespace TextureManager
 {
-    extern std::unordered_map<std::string, sf::Texture> textures;
+    static std::unordered_map<std::string, sf::Texture> textures;
     sf::Texture &getTexture(const std::string &path);
 } // namespace TextureManager
