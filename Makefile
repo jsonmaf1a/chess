@@ -1,13 +1,21 @@
-CXX = g++
+CXX = clang++
 SRC = $(wildcard src/*.cpp)
-PIECES_SRC = $(wildcard src/pieces/*.cpp)
-SHARED_SRC = $(wildcard src/shared/*.cpp)
 CXXFLAGS = -std=c++23
 LDFLAGS = -lpthread -lsfml-window -lsfml-graphics -lsfml-system -lsfml-audio -lsfml-network
 OBJ = $(SRC:src/%.cpp=lib/%.o)
+
+PIECES_SRC = $(wildcard src/pieces/*.cpp)
+SHARED_SRC = $(wildcard src/shared/*.cpp)
+UTILS_SRC = $(wildcard src/utils/*.cpp)
+CONFIG_SRC = $(wildcard src/config/*.cpp)
+
 PIECES_OBJ = $(PIECES_SRC:src/pieces/%.cpp=lib/pieces/%.o)
 SHARED_OBJ = $(SHARED_SRC:src/shared/%.cpp=lib/shared/%.o)
-ALL_OBJ = $(OBJ) $(SHARED_OBJ) $(PIECES_OBJ)
+UTILS_OBJ = $(UTILS_SRC:src/utils/%.cpp=lib/utils/%.o)
+CONFIG_OBJ = $(CONFIG_SRC:src/config/%.cpp=lib/config/%.o)
+
+ALL_OBJ = $(OBJ) $(UTILS_OBJ) $(SHARED_OBJ) $(PIECES_OBJ) $(CONFIG_OBJ)
+
 BIN = bin/app
 DEPFLAGS = -MMD -MP
 DEPS = $(ALL_OBJ:.o=.d)

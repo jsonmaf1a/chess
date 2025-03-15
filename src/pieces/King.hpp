@@ -5,11 +5,11 @@
 class King : public Piece
 {
   private:
-    static constexpr const PieceType type = PieceType::King;
+    static constexpr PieceType type = PieceType::King;
 
   public:
-    King(sf::Vector2i position, PieceColor color)
-        : Piece(type, position, color)
+    King(sf::Vector2i position, Side side)
+        : Piece(type, position, side)
     {}
 
     ~King() = default;

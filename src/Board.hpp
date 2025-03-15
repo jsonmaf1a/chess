@@ -12,33 +12,39 @@ class Board : public UIComponent
 {
   public:
     Board(sf::RenderWindow &target, sf::FloatRect bounds,
-          sf::FloatRect viewport);
+          sf::FloatRect viewport)
+        : UIComponent(bounds)
+    {
+        setView(bounds);
+        view->setViewport(viewport);
+
+        initializePieces();
+    }
     ~Board() = default;
 
-    static constexpr const int GRID_SIZE = 8;
-    static constexpr const float CELL_SIZE = 100.f;
+    static constexpr int GRID_SIZE = 8;
+    static constexpr float CELL_SIZE = 100.f;
 
-    void createPieces();
-    void initializePieces();
+    std::vector<std::shared_ptr<Piece>> pieces;
+    std::optional<std::reference_wrapper<Piece>> selectedPiece;
 
     virtual void drawSelf(sf::RenderWindow &window) override;
     virtual EventResult handleSelfEvent(const EventContext &eventCtx) override;
 
-  private:
-    std::vector<std::shared_ptr<Piece>> pieces;
+    void initializePieces();
+    void createPieces();
 
-    int hoveredRow = -1;
-    int hoveredCol = -1;
+  private:
+    sf::Vector2i hoveredCell = {-1, -1};
 
     // TODO: intoduce theme manager and use it to get colors and shit
-    static constexpr const sf::Color colorDark = {119, 163, 169, 255};
-    static constexpr const sf::Color colorLight = {220, 220, 220, 255};
+    static constexpr sf::Color colorDark = {119, 163, 169, 255};
+    static constexpr sf::Color colorLight = {220, 220, 220, 255};
 
     void drawLabels(sf::RenderWindow &window);
     sf::Vector2f getNormalizedMousePosition(const sf::Vector2i &mousePos,
                                             const sf::RenderWindow &window);
     sf::Color getCellColor(int position) const;
     bool isMouseOverCell(sf::Vector2i mousePos);
-    void setHoveredCell(sf::Vector2i position);
     void resetHoveredCell();
 };

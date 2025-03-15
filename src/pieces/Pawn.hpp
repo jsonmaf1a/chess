@@ -5,11 +5,11 @@
 class Pawn : public Piece
 {
   private:
-    static constexpr const PieceType type = PieceType::Pawn;
+    static constexpr PieceType type = PieceType::Pawn;
 
   public:
-    Pawn(sf::Vector2i position, PieceColor color)
-        : Piece(type, position, color)
+    Pawn(sf::Vector2i position, Side side)
+        : Piece(type, position, side)
     {}
 
     ~Pawn() = default;

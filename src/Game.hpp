@@ -1,50 +1,39 @@
 #pragma once
 
 #include "Board.hpp"
-#include "Piece.hpp"
 #include "UIManager.hpp"
-
-enum class Player
-{
-    White,
-    Black
-};
-
-struct Move
-{
-  public:
-    Player player;
-    PieceType pieceType;
-    sf::Vector2f position;
-};
+#include "config/Layout.hpp"
+#include "shared/EventHandler.hpp"
+#include "shared/GameData.hpp"
 
 // TODO:
 // * Count all moves to follow 50-move rule
 // * Handle:
-// * - mate
+// * - mate (win/lose)
 // * - stalemate (no possible moves, repetitions)
-// * - win
-// * - lose
-class Game
+class Game : public EventHandler
 {
   public:
-    Game(sf::RenderWindow &window, UIManager uiManager, Board board)
+    Game(sf::RenderWindow &window, UIManager &ui)
         : window(window)
-        , board(board)
-    {}
-    ~Game();
+        , board(std::make_shared<Board>(window, Layout::BoardBounds,
+                                        Layout::BoardViewport))
+    {
+        ui.addComponent(board);
+    }
+    ~Game() = default;
 
-    void update();
+    void run();
+    void makeMove();
+    bool isMate();
+    bool isStalemate();
+    bool isPawnPromotion();
+
+    virtual EventResult handleSelfEvent(const EventContext &eventCtx) override;
 
   private:
     sf::RenderWindow &window;
-    Board board;
-
-    std::vector<std::unique_ptr<Piece>> whitePieces;
-    std::vector<std::unique_ptr<Piece>> blackPieces;
-
-    std::optional<std::reference_wrapper<Piece>> selectedPiece;
-    Player currentPlayer;
-
+    std::shared_ptr<Board> board;
+    Side currentSide;
     std::vector<std::unique_ptr<Move>> moves;
 };

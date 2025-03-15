@@ -1,3 +1,4 @@
+#include "Game.hpp"
 #include "Window.hpp"
 #include "shared/FontManager.hpp"
 
@@ -8,11 +9,15 @@ int main()
 {
     FontManager::loadFonts();
 
-    Window window;
+    UIManager ui;
+    Window window(ui);
+    Game game(window.getRenderWindow(), ui);
+
     while(window.isOpen())
     {
         window.pollEvents();
         window.update();
+        // game.update()
     }
 
     return 0;

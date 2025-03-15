@@ -49,11 +49,6 @@ EventResult UIComponent::handleEvent(const EventContext &event)
     return handleSelfEvent(event);
 }
 
-bool UIComponent::isMouseOverViewport(sf::Vector2f normalizedMousePos)
-{
-    return isViewportContainsPoint(normalizedMousePos);
-}
-
 void UIComponent::setVisible(bool visible) { this->visible = visible; }
 
 bool UIComponent::isVisible() const { return visible; }

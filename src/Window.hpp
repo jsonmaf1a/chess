@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UIManager.hpp"
+#include "config/Layout.hpp"
 #include "shared/CursorManager.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -10,32 +11,52 @@
 class Window
 {
   public:
-    static constexpr const sf::Color BACKGROUND = {30, 30, 30, 255};
-
-    static constexpr const uint WINDOW_WIDTH = 1200;
-    static constexpr const uint WINDOW_HEIGHT = 800;
+    static constexpr sf::Color BACKGROUND = {30, 30, 30, 255};
     static constexpr const char *WINDOW_TITLE = "sfml-chess";
 
-    Window(uint width = WINDOW_WIDTH, uint height = WINDOW_HEIGHT,
-           const std::string &title = WINDOW_TITLE);
-    ~Window();
+    Window(UIManager &ui, uint width = Layout::WindowBounds.x,
+           uint height = Layout::WindowBounds.y,
+           const std::string &title = WINDOW_TITLE)
+        : width(width)
+        , height(height)
+        , title(title)
+        , ui(ui)
+        , cursorManager(window)
+    {
+        window.create(sf::VideoMode({width, height}), title, sf::Style::None,
+                      sf::State::Windowed);
+        window.setVerticalSyncEnabled(true);
+
+        ui.addComponent(std::make_shared<Sidebar>(window, Layout::SidebarBounds,
+                                                  Layout::SidebarViewport));
+
+        isInitialized = true;
+    }
+
+    ~Window()
+    {
+        if(isInitialized)
+            window.close();
+
+        isInitialized = false;
+    }
 
     void update();
     void pollEvents();
-    void createRootComponents();
+    sf::RenderWindow &getRenderWindow();
 
     bool isOpen() { return window.isOpen(); }
 
   private:
     sf::RenderWindow window;
-    UIManager uiManager;
+    UIManager &ui;
     CursorManager cursorManager;
 
     const uint width;
     const uint height;
     const std::string title;
 
-    bool is_initialized = false;
+    bool isInitialized = false;
 
     void handleKeyPress(const sf::Event::KeyPressed &event);
 };

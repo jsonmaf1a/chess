@@ -18,6 +18,17 @@ struct EventContext
     CursorManager &cursorManager;
 };
 
+class EventHandler
+{
+  protected:
+    EventHandler() = default;
+    virtual ~EventHandler() = default;
+    virtual EventResult handleSelfEvent(const EventContext &event)
+    {
+        return EventResult::Ignored;
+    }
+};
+
 namespace EventUtils
 {
     inline bool isMouseEvent(const sf::Event &event)

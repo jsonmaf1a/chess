@@ -6,7 +6,7 @@
 
 void Sidebar::drawSelf(sf::RenderWindow &window)
 {
-    window.setView(view);
+    window.setView(view.value());
 
     sf::RectangleShape panelViewBg;
     panelViewBg.setSize(sf::Vector2f(400, 800));
@@ -27,7 +27,7 @@ EventResult Sidebar::handleSelfEvent(const EventContext &eventCtx)
         float normY = static_cast<float>((mouseMoved->position.y)) /
                       eventCtx.window.getSize().y;
 
-        if(isMouseOverViewport({normX, normY}))
+        if(viewportContains(sf::Vector2f{normX, normY}))
         {
             std::cout << "Sidebar mousemove: "
                       << "x: " << mouseMoved->position.x << "\t"

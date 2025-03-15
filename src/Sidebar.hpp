@@ -9,7 +9,8 @@ class Sidebar : public UIComponent
             sf::FloatRect viewport)
         : UIComponent(bounds)
     {
-        view.setViewport(viewport);
+        setView(bounds);
+        view->setViewport(viewport);
     }
     ~Sidebar() = default;
 

@@ -5,11 +5,11 @@
 class Knight : public Piece
 {
   private:
-    static constexpr const PieceType type = PieceType::Knight;
+    static constexpr PieceType type = PieceType::Knight;
 
   public:
-    Knight(sf::Vector2i position, PieceColor color)
-        : Piece(type, position, color)
+    Knight(sf::Vector2i position, Side side)
+        : Piece(type, position, side)
     {}
 
     ~Knight() = default;

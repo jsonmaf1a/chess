@@ -1,28 +1,34 @@
 #pragma once
 
-#include "Events.hpp"
+#include "EventHandler.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>
 #include <vector>
 
-class UIComponent
+class UIComponent : public EventHandler
 {
   protected:
+    UIComponent(sf::FloatRect bounds)
+        : bounds(bounds) {};
+    virtual ~UIComponent() = default;
     sf::FloatRect bounds;
+    std::vector<std::shared_ptr<UIComponent>> children;
+    std::optional<sf::View> view = std::nullopt;
+
     bool visible = true;
     bool enabled = true;
-    std::vector<std::shared_ptr<UIComponent>> children;
     UIComponent *parent = nullptr;
 
+    virtual void drawSelf(sf::RenderWindow &window) = 0;
+
   public:
-    UIComponent(sf::FloatRect bounds)
-        : bounds(bounds)
-        , view(bounds) {};
-    virtual ~UIComponent() = default;
+    virtual void draw(sf::RenderWindow &window);
 
-    sf::View view;
+    void setView(sf::View view) { this->view = view; };
+    void setView(sf::FloatRect bounds) { view = sf::View(bounds); };
 
+    EventResult handleEvent(const EventContext &event);
     void addChild(std::shared_ptr<UIComponent> child);
     void removeChild(std::shared_ptr<UIComponent> child);
     void setVisible(bool visible);
@@ -32,22 +38,10 @@ class UIComponent
     void setBounds(const sf::FloatRect &bounds);
     const sf::FloatRect &getBounds() const;
 
-    bool isMouseOverViewport(sf::Vector2f normalizedMousePos);
-
     template <typename T>
-    bool isViewportContainsPoint(sf::Vector2<T> position) const
+    bool viewportContains(const sf::Vector2<T> &position) const
     {
-        return visible && enabled &&
-               view.getViewport().contains(sf::Vector2<float>(position));
-    }
-
-    virtual void draw(sf::RenderWindow &window);
-    virtual EventResult handleEvent(const EventContext &event);
-
-  protected:
-    virtual void drawSelf(sf::RenderWindow &window) = 0;
-    virtual EventResult handleSelfEvent(const EventContext &event)
-    {
-        return EventResult::Ignored;
+        return view.has_value() && visible && enabled &&
+               view->getViewport().contains(sf::Vector2f(position));
     }
 };

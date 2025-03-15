@@ -5,11 +5,11 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <math.h>
 
-Piece::Piece(PieceType type, sf::Vector2i position, PieceColor color)
+Piece::Piece(PieceType type, sf::Vector2i position, Side side)
     : position(position)
-    , color(color)
+    , side(side)
     , type(type)
-    , texture(TextureManager::getTexture(getPieceTexturePath(type, color)))
+    , texture(TextureManager::getTexture(getPieceTexturePath(type, side)))
     , sprite(texture)
     , UIComponent(sf::FloatRect({0, 0}, {SPRITE_SIZE, SPRITE_SIZE}))
 {
@@ -23,10 +23,7 @@ Piece::Piece(PieceType type, sf::Vector2i position, PieceColor color)
     sprite.setPosition(spritePosition);
 }
 
-void Piece::drawSelf(sf::RenderWindow &window)
-{
-    window.draw(sprite);
-};
+void Piece::drawSelf(sf::RenderWindow &window) { window.draw(sprite); };
 
 void Piece::moveTo(sf::Vector2i newPosition)
 {
@@ -57,20 +54,14 @@ bool Piece::isValidMove(sf::Vector2i newPosition) const
     return it != moves.end();
 };
 
-sf::Vector2i Piece::getPosition() const
-{
-    return position;
-}
+sf::Vector2i Piece::getPosition() const { return position; }
 
-PieceColor Piece::getColor() const
-{
-    return color;
-}
+Side Piece::getSide() const { return side; }
 
-std::string Piece::getPieceTexturePath(PieceType type, PieceColor color)
+std::string Piece::getPieceTexturePath(PieceType type, Side side)
 {
     return std::format("{}/{}/{}.png", BASE_TEXTURES_PATH,
-                       (color == PieceColor::White ? "white" : "black"),
+                       (side == Side::White ? "white" : "black"),
                        pieceTypeToString(type));
 }
 

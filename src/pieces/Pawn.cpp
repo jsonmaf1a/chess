@@ -9,7 +9,7 @@ std::vector<sf::Vector2i> Pawn::getValidMoves() const
 {
     std::vector<sf::Vector2i> moves;
 
-    int direction = (color == PieceColor::White) ? -1 : 1;
+    int direction = (side == Side::White) ? -1 : 1;
 
     int newY = position.y + direction;
     if(newY >= 0 && newY < 8)

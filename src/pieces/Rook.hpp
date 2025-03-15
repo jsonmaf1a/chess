@@ -5,11 +5,11 @@
 class Rook : public Piece
 {
   private:
-    static constexpr const PieceType type = PieceType::Rook;
+    static constexpr PieceType type = PieceType::Rook;
 
   public:
-    Rook(sf::Vector2i position, PieceColor color)
-        : Piece(type, position, color)
+    Rook(sf::Vector2i position, Side side)
+        : Piece(type, position, side)
     {}
 
     ~Rook() = default;

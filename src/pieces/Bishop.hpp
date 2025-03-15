@@ -5,11 +5,11 @@
 class Bishop : public Piece
 {
   private:
-    static constexpr const PieceType type = PieceType::Bishop;
+    static constexpr PieceType type = PieceType::Bishop;
 
   public:
-    Bishop(sf::Vector2i position, PieceColor color)
-        : Piece(type, position, color)
+    Bishop(sf::Vector2i position, Side side)
+        : Piece(type, position, side)
     {}
 
     ~Bishop() = default;
