@@ -29,11 +29,12 @@ class Game : public EventHandler
     bool isStalemate();
     bool isPawnPromotion();
 
-    virtual EventResult handleSelfEvent(const EventContext &eventCtx) override;
+    virtual EventResult handleEvent(const EventContext &eventCtx) override;
 
   private:
     sf::RenderWindow &window;
     std::shared_ptr<Board> board;
-    Side currentSide;
+    Side currentSide = Side::White;
     std::vector<std::unique_ptr<Move>> moves;
+    std::optional<std::reference_wrapper<Piece>> selectedPiece;
 };

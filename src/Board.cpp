@@ -7,7 +7,8 @@
 #include "pieces/Rook.hpp"
 #include "shared/FontManager.hpp"
 #include "shared/Notation.hpp"
-#include "utils/ColorUtils.hpp"
+#include "shared/utils/ColorUtils.hpp"
+#include "shared/utils/PositionUtils.hpp"
 #include <iostream>
 
 void Board::initializePieces()
@@ -78,14 +79,14 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
 {
     if(eventCtx.event.is<sf::Event::MouseMoved>())
     {
-        const auto mouseMoved = eventCtx.event.getIf<sf::Event::MouseMoved>();
+        const auto mouseMovedEvent =
+            eventCtx.event.getIf<sf::Event::MouseMoved>();
         const auto &window = eventCtx.window;
         auto &cursorManager = eventCtx.cursorManager;
 
-        const auto mousePos = mouseMoved->position;
-
+        const auto mousePos = mouseMovedEvent->position;
         sf::Vector2f normalizedMousePos =
-            getNormalizedMousePosition(mousePos, window);
+            PositionUtils::getNormalizedMousePosition(mousePos, window);
 
         if(!viewportContains(normalizedMousePos))
         {
@@ -95,19 +96,18 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
             return EventResult::Handled;
         }
 
-        sf::Vector2f localMousePos =
-            window.mapPixelToCoords(mousePos, view.value());
+        auto cellPosition = getCellFromMousePos(mousePos, window, view.value());
 
-        int col = localMousePos.x / CELL_SIZE;
-        int row = localMousePos.y / CELL_SIZE;
-
-        if(isMouseOverCell({col, row}))
+        if(isMouseOverCell(cellPosition))
         {
+            if(hoveredCell == cellPosition)
+                return EventResult::Consumed;
+
             cursorManager.setHandCursor();
-            hoveredCell = {col, row};
+            hoveredCell = cellPosition;
 
             std::cout << "Hovered cell: "
-                      << Notation::toChessNotation({col, row}) << "\n";
+                      << Notation::toChessNotation(cellPosition) << "\n";
 
             return EventResult::Consumed;
         }
@@ -192,9 +192,19 @@ bool Board::isMouseOverCell(sf::Vector2i mousePos)
     return row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE;
 }
 
-sf::Vector2f Board::getNormalizedMousePosition(const sf::Vector2i &mousePos,
-                                               const sf::RenderWindow &window)
+std::shared_ptr<Piece> Board::getPiece(sf::Vector2i cellPosition) const
 {
-    return {static_cast<float>(mousePos.x) / window.getSize().x,
-            static_cast<float>(mousePos.y) / window.getSize().y};
+    return board[cellPosition.x][cellPosition.y];
+}
+
+const sf::View &Board::getView() const { return view.value(); }
+
+sf::Vector2i Board::getCellFromMousePos(const sf::Vector2i &mousePos,
+                                        const sf::RenderWindow &window,
+                                        const sf::View &view) const
+{
+    sf::Vector2f localMousePos = window.mapPixelToCoords(mousePos, view);
+
+    return {static_cast<int>(localMousePos.x / CELL_SIZE),
+            static_cast<int>(localMousePos.y / CELL_SIZE)};
 }

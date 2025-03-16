@@ -8,7 +8,7 @@ enum class Side
     Black,
 };
 
-enum class PieceType
+enum class PieceKind
 {
     Pawn,
     Rook,
@@ -22,6 +22,6 @@ struct Move
 {
   public:
     Side player;
-    PieceType pieceType;
+    PieceKind pieceKind;
     std::string position;
 };

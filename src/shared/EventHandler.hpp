@@ -22,19 +22,12 @@ class EventHandler
 {
   protected:
     EventHandler() = default;
+
+  public:
     virtual ~EventHandler() = default;
-    virtual EventResult handleSelfEvent(const EventContext &event)
+
+    virtual EventResult handleEvent(const EventContext &eventCtx)
     {
         return EventResult::Ignored;
-    }
+    };
 };
-
-namespace EventUtils
-{
-    inline bool isMouseEvent(const sf::Event &event)
-    {
-        return event.is<sf::Event::MouseMoved>() ||
-               event.is<sf::Event::MouseButtonPressed>() ||
-               event.is<sf::Event::MouseButtonReleased>();
-    }
-} // namespace EventUtils

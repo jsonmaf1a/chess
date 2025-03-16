@@ -5,11 +5,11 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <math.h>
 
-Piece::Piece(PieceType type, sf::Vector2i position, Side side)
+Piece::Piece(PieceKind kind, sf::Vector2i position, Side side)
     : position(position)
     , side(side)
-    , type(type)
-    , texture(TextureManager::getTexture(getPieceTexturePath(type, side)))
+    , kind(kind)
+    , texture(TextureManager::getTexture(getPieceTexturePath(kind, side)))
     , sprite(texture)
     , UIComponent(sf::FloatRect({0, 0}, {SPRITE_SIZE, SPRITE_SIZE}))
 {
@@ -56,32 +56,34 @@ bool Piece::isValidMove(sf::Vector2i newPosition) const
 
 sf::Vector2i Piece::getPosition() const { return position; }
 
-Side Piece::getSide() const { return side; }
-
-std::string Piece::getPieceTexturePath(PieceType type, Side side)
+std::string Piece::getPieceTexturePath(PieceKind kind, Side side)
 {
     return std::format("{}/{}/{}.png", BASE_TEXTURES_PATH,
                        (side == Side::White ? "white" : "black"),
-                       pieceTypeToString(type));
+                       pieceTypeToString(kind));
 }
 
-std::string Piece::pieceTypeToString(PieceType type)
+std::string Piece::pieceTypeToString(PieceKind kind)
 {
-    switch(type)
+    switch(kind)
     {
-        case PieceType::Pawn:
+        case PieceKind::Pawn:
             return "pawn";
-        case PieceType::Knight:
+        case PieceKind::Knight:
             return "knight";
-        case PieceType::Bishop:
+        case PieceKind::Bishop:
             return "bishop";
-        case PieceType::Rook:
+        case PieceKind::Rook:
             return "rook";
-        case PieceType::Queen:
+        case PieceKind::Queen:
             return "queen";
-        case PieceType::King:
+        case PieceKind::King:
             return "king";
         default:
             return "unknown";
     }
 }
+
+Side Piece::getSide() const { return side; }
+
+PieceKind Piece::getKind() const { return kind; }

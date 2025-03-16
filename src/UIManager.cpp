@@ -1,18 +1,19 @@
 #include "UIManager.hpp"
+#include "Sidebar.hpp"
+#include "config/Layout.hpp"
 
 void UIManager::addComponent(std::shared_ptr<UIComponent> component)
 {
     rootComponents.push_back(component);
+    dispatcher.registerListener(component);
 }
 
 void UIManager::removeComponent(std::shared_ptr<UIComponent> component)
 {
-    auto it =
-        std::find(rootComponents.begin(), rootComponents.end(), component);
-    if(it != rootComponents.end())
-    {
-        rootComponents.erase(it);
-    }
+    dispatcher.unregisterListener(component);
+    rootComponents.erase(
+        std::remove(rootComponents.begin(), rootComponents.end(), component),
+        rootComponents.end());
 }
 
 void UIManager::handleEvent(const EventContext &event)
@@ -33,4 +34,11 @@ void UIManager::draw(sf::RenderWindow &window)
     {
         component->draw(window);
     }
+}
+
+void UIManager::init(sf::RenderWindow &window)
+{
+
+    addComponent(std::make_shared<Sidebar>(window, Layout::SidebarBounds,
+                                           Layout::SidebarViewport));
 }

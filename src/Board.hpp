@@ -26,13 +26,17 @@ class Board : public UIComponent
     static constexpr float CELL_SIZE = 100.f;
 
     std::vector<std::shared_ptr<Piece>> pieces;
-    std::optional<std::reference_wrapper<Piece>> selectedPiece;
+    std::shared_ptr<Piece> board[GRID_SIZE][GRID_SIZE] = {nullptr};
 
     virtual void drawSelf(sf::RenderWindow &window) override;
     virtual EventResult handleSelfEvent(const EventContext &eventCtx) override;
-
     void initializePieces();
     void createPieces();
+    const sf::View &getView() const;
+    std::shared_ptr<Piece> getPiece(sf::Vector2i cellPosition) const;
+    sf::Vector2i getCellFromMousePos(const sf::Vector2i &mousePos,
+                                     const sf::RenderWindow &window,
+                                     const sf::View &view) const;
 
   private:
     sf::Vector2i hoveredCell = {-1, -1};
@@ -42,8 +46,6 @@ class Board : public UIComponent
     static constexpr sf::Color colorLight = {220, 220, 220, 255};
 
     void drawLabels(sf::RenderWindow &window);
-    sf::Vector2f getNormalizedMousePosition(const sf::Vector2i &mousePos,
-                                            const sf::RenderWindow &window);
     sf::Color getCellColor(int position) const;
     bool isMouseOverCell(sf::Vector2i mousePos);
     void resetHoveredCell();

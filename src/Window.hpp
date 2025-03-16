@@ -14,47 +14,24 @@ class Window
     static constexpr sf::Color BACKGROUND = {30, 30, 30, 255};
     static constexpr const char *WINDOW_TITLE = "sfml-chess";
 
-    Window(UIManager &ui, uint width = Layout::WindowBounds.x,
+    Window(uint width = Layout::WindowBounds.x,
            uint height = Layout::WindowBounds.y,
-           const std::string &title = WINDOW_TITLE)
-        : width(width)
-        , height(height)
-        , title(title)
-        , ui(ui)
-        , cursorManager(window)
-    {
-        window.create(sf::VideoMode({width, height}), title, sf::Style::None,
-                      sf::State::Windowed);
-        window.setVerticalSyncEnabled(true);
-
-        ui.addComponent(std::make_shared<Sidebar>(window, Layout::SidebarBounds,
-                                                  Layout::SidebarViewport));
-
-        isInitialized = true;
-    }
-
-    ~Window()
-    {
-        if(isInitialized)
-            window.close();
-
-        isInitialized = false;
-    }
+           const std::string &title = WINDOW_TITLE);
+    ~Window();
 
     void update();
     void pollEvents();
     sf::RenderWindow &getRenderWindow();
+    EventDispatcher &getEventDispatcher();
+    UIManager &getUI();
 
-    bool isOpen() { return window.isOpen(); }
+    bool isOpen() const;
 
   private:
     sf::RenderWindow window;
-    UIManager &ui;
+    EventDispatcher dispatcher;
     CursorManager cursorManager;
-
-    const uint width;
-    const uint height;
-    const std::string title;
+    UIManager ui;
 
     bool isInitialized = false;
 

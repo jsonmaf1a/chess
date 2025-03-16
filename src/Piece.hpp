@@ -14,7 +14,7 @@ class Piece : public UIComponent
     static constexpr const char *BASE_TEXTURES_PATH =
         "./assets/textures/pieces/";
 
-    const PieceType type;
+    const PieceKind kind;
 
     Side side;
     sf::Vector2i position;
@@ -23,10 +23,10 @@ class Piece : public UIComponent
 
     bool wasMoved = false;
 
-    static std::string getPieceTexturePath(PieceType type, Side side);
+    static std::string getPieceTexturePath(PieceKind kind, Side side);
 
   public:
-    Piece(PieceType type, sf::Vector2i position, Side side);
+    Piece(PieceKind kind, sf::Vector2i position, Side side);
     ~Piece() = default;
 
     virtual std::vector<sf::Vector2i> getValidMoves() const = 0;
@@ -39,9 +39,10 @@ class Piece : public UIComponent
 
     sf::Vector2i getPosition() const;
     Side getSide() const;
+    PieceKind getKind() const;
+    static std::string pieceTypeToString(PieceKind kind);
 
   private:
     template <typename T>
     sf::Vector2f calculateSpritePosition(sf::Vector2<T> position) const;
-    static std::string pieceTypeToString(PieceType type);
 };

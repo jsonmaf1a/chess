@@ -12,6 +12,7 @@ class UIComponent : public EventHandler
     UIComponent(sf::FloatRect bounds)
         : bounds(bounds) {};
     virtual ~UIComponent() = default;
+
     sf::FloatRect bounds;
     std::vector<std::shared_ptr<UIComponent>> children;
     std::optional<sf::View> view = std::nullopt;
@@ -28,7 +29,12 @@ class UIComponent : public EventHandler
     void setView(sf::View view) { this->view = view; };
     void setView(sf::FloatRect bounds) { view = sf::View(bounds); };
 
-    EventResult handleEvent(const EventContext &event);
+    EventResult handleEvent(const EventContext &event) override;
+    virtual EventResult handleSelfEvent(const EventContext &event)
+    {
+        return EventResult::Ignored;
+    }
+
     void addChild(std::shared_ptr<UIComponent> child);
     void removeChild(std::shared_ptr<UIComponent> child);
     void setVisible(bool visible);

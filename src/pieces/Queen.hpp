@@ -5,11 +5,11 @@
 class Queen : public Piece
 {
   private:
-    static constexpr PieceType type = PieceType::Queen;
+    static constexpr PieceKind kind = PieceKind::Queen;
 
   public:
     Queen(sf::Vector2i position, Side side)
-        : Piece(type, position, side)
+        : Piece(kind, position, side)
     {}
 
     ~Queen() = default;

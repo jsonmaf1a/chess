@@ -9,9 +9,12 @@ int main()
 {
     FontManager::loadFonts();
 
-    UIManager ui;
-    Window window(ui);
-    Game game(window.getRenderWindow(), ui);
+    Window window;
+
+    auto game =
+        std::make_shared<Game>(window.getRenderWindow(), window.getUI());
+
+    window.getEventDispatcher().registerListener(game);
 
     while(window.isOpen())
     {

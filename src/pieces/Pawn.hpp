@@ -5,11 +5,11 @@
 class Pawn : public Piece
 {
   private:
-    static constexpr PieceType type = PieceType::Pawn;
+    static constexpr PieceKind kind = PieceKind::Pawn;
 
   public:
     Pawn(sf::Vector2i position, Side side)
-        : Piece(type, position, side)
+        : Piece(kind, position, side)
     {}
 
     ~Pawn() = default;
