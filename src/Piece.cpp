@@ -5,13 +5,14 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <math.h>
 
+// TODO: get rid of position
 Piece::Piece(PieceKind kind, sf::Vector2i position, Side side)
-    : position(position)
+    : UIComponent({SPRITE_SIZE, SPRITE_SIZE})
+    , currentPosition(position)
     , side(side)
     , kind(kind)
     , texture(TextureManager::getTexture(getPieceTexturePath(kind, side)))
     , sprite(texture)
-    , UIComponent(sf::FloatRect({0, 0}, {SPRITE_SIZE, SPRITE_SIZE}))
 {
     sprite.setTexture(texture, true);
     sprite.setScale({SCALE, SCALE});
@@ -19,24 +20,20 @@ Piece::Piece(PieceKind kind, sf::Vector2i position, Side side)
     sf::FloatRect spriteBounds = sprite.getLocalBounds();
     sprite.setOrigin({spriteBounds.size.x / 2.0f, spriteBounds.size.y / 2.0f});
 
-    sf::Vector2f spritePosition = calculateSpritePosition(position);
-    sprite.setPosition(spritePosition);
+    setPosition(position);
 }
 
 void Piece::drawSelf(sf::RenderWindow &window) { window.draw(sprite); };
 
-void Piece::moveTo(sf::Vector2i newPosition)
+void Piece::setPosition(sf::Vector2i position)
 {
-    position = newPosition;
+    this->currentPosition = position;
 
-    sf::Vector2f spritePosition = calculateSpritePosition(newPosition);
+    sf::Vector2f spritePosition = normalizeSpritePosition(position);
     sprite.setPosition(spritePosition);
-
-    wasMoved = true;
 }
 
-template <typename T>
-sf::Vector2f Piece::calculateSpritePosition(sf::Vector2<T> position) const
+sf::Vector2f Piece::normalizeSpritePosition(sf::Vector2i position) const
 {
     float posX =
         std::round(position.x * Board::CELL_SIZE + Board::CELL_SIZE / 2.0f);
@@ -54,16 +51,21 @@ bool Piece::isValidMove(sf::Vector2i newPosition) const
     return it != moves.end();
 };
 
-sf::Vector2i Piece::getPosition() const { return position; }
+sf::Vector2i Piece::getPosition() const { return currentPosition; }
 
 std::string Piece::getPieceTexturePath(PieceKind kind, Side side)
 {
     return std::format("{}/{}/{}.png", BASE_TEXTURES_PATH,
                        (side == Side::White ? "white" : "black"),
-                       pieceTypeToString(kind));
+                       pieceKindToString(kind));
 }
 
-std::string Piece::pieceTypeToString(PieceKind kind)
+std::string Piece::pieceKindToString()
+{
+    return Piece::pieceKindToString(kind);
+}
+
+std::string Piece::pieceKindToString(PieceKind kind)
 {
     switch(kind)
     {

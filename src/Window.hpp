@@ -1,8 +1,8 @@
 #pragma once
 
 #include "UIManager.hpp"
-#include "config/Layout.hpp"
 #include "shared/CursorManager.hpp"
+#include "shared/config/Layout.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Cursor.hpp>

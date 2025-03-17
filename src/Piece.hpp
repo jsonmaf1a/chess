@@ -1,6 +1,7 @@
 #pragma once
 
-#include "shared/GameData.hpp"
+#include "shared/PieceKind.hpp"
+#include "shared/Side.hpp"
 #include "shared/UIComponent.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -17,11 +18,9 @@ class Piece : public UIComponent
     const PieceKind kind;
 
     Side side;
-    sf::Vector2i position;
+    sf::Vector2i currentPosition;
     sf::Texture texture;
     sf::Sprite sprite;
-
-    bool wasMoved = false;
 
     static std::string getPieceTexturePath(PieceKind kind, Side side);
 
@@ -29,20 +28,19 @@ class Piece : public UIComponent
     Piece(PieceKind kind, sf::Vector2i position, Side side);
     ~Piece() = default;
 
-    virtual std::vector<sf::Vector2i> getValidMoves() const = 0;
+    bool wasMoved = false;
 
     virtual void drawSelf(sf::RenderWindow &window) override;
+
+    virtual std::vector<sf::Vector2i> getValidMoves() const = 0;
     bool isValidMove(sf::Vector2i newPosition) const;
 
-    // NOTE: consider moving this to the board
-    void moveTo(sf::Vector2i newPosition);
-
+    void setPosition(sf::Vector2i position);
     sf::Vector2i getPosition() const;
     Side getSide() const;
     PieceKind getKind() const;
-    static std::string pieceTypeToString(PieceKind kind);
 
-  private:
-    template <typename T>
-    sf::Vector2f calculateSpritePosition(sf::Vector2<T> position) const;
+    static std::string pieceKindToString(PieceKind kind);
+    std::string pieceKindToString();
+    sf::Vector2f normalizeSpritePosition(sf::Vector2i position) const;
 };

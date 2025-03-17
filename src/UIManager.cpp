@@ -1,6 +1,6 @@
 #include "UIManager.hpp"
 #include "Sidebar.hpp"
-#include "config/Layout.hpp"
+#include "shared/config/Layout.hpp"
 
 void UIManager::addComponent(std::shared_ptr<UIComponent> component)
 {

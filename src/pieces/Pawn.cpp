@@ -11,18 +11,18 @@ std::vector<sf::Vector2i> Pawn::getValidMoves() const
 
     int direction = (side == Side::White) ? -1 : 1;
 
-    int newY = position.y + direction;
+    int newY = currentPosition.y + direction;
     if(newY >= 0 && newY < 8)
     {
-        moves.push_back({position.x, newY});
+        moves.push_back({currentPosition.x, newY});
     }
 
     if(!wasMoved)
     {
-        int newY = position.y + 2 * direction;
+        int newY = currentPosition.y + 2 * direction;
         if(newY >= 0 && newY < 8)
         {
-            moves.push_back({position.x, newY});
+            moves.push_back({currentPosition.x, newY});
         }
     }
 

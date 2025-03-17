@@ -59,8 +59,6 @@ void Window::pollEvents()
         {
             dispatcher.dispatch(
                 EventContext{event.value(), window, cursorManager});
-            // ui.handleEvent(EventContext{event.value(), window,
-            // cursorManager});
         }
     }
 }

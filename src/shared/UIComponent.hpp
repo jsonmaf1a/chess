@@ -11,6 +11,8 @@ class UIComponent : public EventHandler
   protected:
     UIComponent(sf::FloatRect bounds)
         : bounds(bounds) {};
+    UIComponent(sf::Vector2f size)
+        : bounds(sf::FloatRect({0, 0}, size)) {};
     virtual ~UIComponent() = default;
 
     sf::FloatRect bounds;

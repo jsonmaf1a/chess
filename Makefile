@@ -7,12 +7,12 @@ OBJ = $(SRC:src/%.cpp=lib/%.o)
 PIECES_SRC = $(wildcard src/pieces/*.cpp)
 SHARED_SRC = $(wildcard src/shared/*.cpp)
 UTILS_SRC = $(wildcard src/shared/utils/*.cpp)
-CONFIG_SRC = $(wildcard src/config/*.cpp)
+CONFIG_SRC = $(wildcard src/shared/config/*.cpp)
 
 PIECES_OBJ = $(PIECES_SRC:src/pieces/%.cpp=lib/pieces/%.o)
 SHARED_OBJ = $(SHARED_SRC:src/shared/%.cpp=lib/shared/%.o)
 UTILS_OBJ = $(UTILS_SRC:src/shared/utils/%.cpp=lib/shared/utils/%.o)
-CONFIG_OBJ = $(CONFIG_SRC:src/config/%.cpp=lib/config/%.o)
+CONFIG_OBJ = $(CONFIG_SRC:src/shared/config/%.cpp=lib/shared/config/%.o)
 
 ALL_OBJ = $(OBJ) $(UTILS_OBJ) $(SHARED_OBJ) $(PIECES_OBJ) $(CONFIG_OBJ)
 

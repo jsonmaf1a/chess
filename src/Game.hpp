@@ -2,9 +2,10 @@
 
 #include "Board.hpp"
 #include "UIManager.hpp"
-#include "config/Layout.hpp"
 #include "shared/EventHandler.hpp"
-#include "shared/GameData.hpp"
+#include "shared/Move.hpp"
+#include "shared/Side.hpp"
+#include "shared/config/Layout.hpp"
 
 // TODO:
 // * Count all moves to follow 50-move rule
@@ -23,9 +24,10 @@ class Game : public EventHandler
     }
     ~Game() = default;
 
-    void run();
-    void makeMove();
-    bool isMate();
+    void start();
+    void move(Piece &piece, sf::Vector2i newPosition);
+    void nextTurn();
+    bool isCheckmate();
     bool isStalemate();
     bool isPawnPromotion();
 
@@ -34,7 +36,8 @@ class Game : public EventHandler
   private:
     sf::RenderWindow &window;
     std::shared_ptr<Board> board;
-    Side currentSide = Side::White;
     std::vector<std::unique_ptr<Move>> moves;
     std::optional<std::reference_wrapper<Piece>> selectedPiece;
+
+    Side currentSide = Side::White;
 };

@@ -1,6 +1,7 @@
 #include "Sidebar.hpp"
 
 #include "Window.hpp"
+#include "shared/utils/PositionUtils.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
 
@@ -22,12 +23,15 @@ EventResult Sidebar::handleSelfEvent(const EventContext &eventCtx)
     {
         const auto mouseMoved = eventCtx.event.getIf<sf::Event::MouseMoved>();
 
-        float normX = static_cast<float>((mouseMoved->position.x)) /
-                      eventCtx.window.getSize().x;
-        float normY = static_cast<float>((mouseMoved->position.y)) /
-                      eventCtx.window.getSize().y;
+        auto normalizedPosition = PositionUtils::getNormalizedMousePosition(
+            mouseMoved->position, eventCtx.window);
 
-        if(viewportContains(sf::Vector2f{normX, normY}))
+        // float normX = static_cast<float>((mouseMoved->position.x)) /
+        //               eventCtx.window.getSize().x;
+        // float normY = static_cast<float>((mouseMoved->position.y)) /
+        //               eventCtx.window.getSize().y;
+
+        if(viewportContains(normalizedPosition))
         {
             std::cout << "Sidebar mousemove: "
                       << "x: " << mouseMoved->position.x << "\t"

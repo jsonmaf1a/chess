@@ -16,23 +16,64 @@ EventResult Game::handleEvent(const EventContext &eventCtx)
             PositionUtils::getNormalizedMousePosition(mousePos, window);
 
         if(!board->viewportContains(normalizedMousePos))
-            return EventResult::Ignored;
+            return EventResult::Handled;
 
         auto cellPosition =
             board->getCellFromMousePos(mousePos, window, board->getView());
 
-        auto piece = board->getPiece(cellPosition);
+        auto maybePiece = board->getPiece(cellPosition);
 
-        if(piece && piece->getSide() == currentSide)
+        if(maybePiece && maybePiece->getSide() == currentSide)
         {
-            auto side = piece->getSide() == Side::White ? "white" : "black";
-            std::cout << Piece::pieceTypeToString(piece->getKind()) << " "
-                      << side << "\n";
-            selectedPiece = *piece;
+            selectedPiece = *maybePiece;
+            board->setSelectedCell(cellPosition);
+
+            auto side = selectedPiece->get().getSide() == Side::White ? "white"
+                                                                      : "black";
+            // std::cout << Piece::pieceKindToString(piece->getKind()) << " "
+            //           << side << "\n";
+
+            std::cout << Piece::pieceKindToString(
+                             selectedPiece->get().getKind())
+                      << " " << side << "\n";
+        }
+        else if(selectedPiece && !maybePiece)
+        {
+            move(selectedPiece->get(), cellPosition);
         }
         else
+        {
+            selectedPiece = std::nullopt;
             std::cout << "nothing" << "\n";
+        }
     }
 
     return EventResult::Ignored;
+}
+
+void Game::move(Piece &piece, sf::Vector2i newPosition)
+{
+    if(!piece.isValidMove(newPosition))
+    {
+        board->resetSelectedCell();
+        return;
+    }
+
+    if(!piece.wasMoved)
+        piece.wasMoved = true;
+
+    moves.push_back(
+        std::make_unique<Move>(piece, piece.getPosition(), newPosition));
+
+    board->highlightMove(*moves[moves.size() - 1]);
+    board->updatePiecePosition(selectedPiece.value(), newPosition);
+    board->print();
+
+    selectedPiece = std::nullopt;
+    nextTurn();
+}
+
+void Game::nextTurn()
+{
+    currentSide = currentSide == Side::White ? Side::Black : Side::White;
 }
