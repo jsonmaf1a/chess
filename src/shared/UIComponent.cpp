@@ -1,5 +1,9 @@
 #include "UIComponent.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <iostream>
+
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 void UIComponent::addChild(std::shared_ptr<UIComponent> child)
 {
@@ -63,3 +67,24 @@ void UIComponent::setBounds(const sf::FloatRect &bounds)
 }
 
 const sf::FloatRect &UIComponent::getBounds() const { return bounds; }
+
+void UIComponent::dumpChildren() const
+{
+
+    auto _children = this->children;
+    std::sort(_children.begin(), _children.end(),
+              [](const auto &a, const auto &b) { return a->id < b->id; });
+
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+    std::cout << "\n"
+              << std::string(w.ws_col, '-') << std::endl; // Print dashes
+
+    for(auto &child : _children)
+    {
+        std::cout << child->id << " ";
+    }
+    std::cout << "\n"
+              << std::string(w.ws_col, '-') << std::endl; // Print dashes
+}

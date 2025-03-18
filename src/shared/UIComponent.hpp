@@ -10,15 +10,18 @@ class UIComponent : public EventHandler
 {
   protected:
     UIComponent(sf::FloatRect bounds)
-        : bounds(bounds) {};
+        : id(nextID++)
+        , bounds(bounds) {};
     UIComponent(sf::Vector2f size)
-        : bounds(sf::FloatRect({0, 0}, size)) {};
+        : id(nextID++)
+        , bounds(sf::FloatRect({0, 0}, size)) {};
     virtual ~UIComponent() = default;
 
     sf::FloatRect bounds;
     std::vector<std::shared_ptr<UIComponent>> children;
     std::optional<sf::View> view = std::nullopt;
 
+    int id;
     bool visible = true;
     bool enabled = true;
     UIComponent *parent = nullptr;
@@ -39,6 +42,7 @@ class UIComponent : public EventHandler
 
     void addChild(std::shared_ptr<UIComponent> child);
     void removeChild(std::shared_ptr<UIComponent> child);
+    void dumpChildren() const;
     void setVisible(bool visible);
     bool isVisible() const;
     void setEnabled(bool enabled);
@@ -52,4 +56,7 @@ class UIComponent : public EventHandler
         return view.has_value() && visible && enabled &&
                view->getViewport().contains(sf::Vector2f(position));
     }
+
+  private:
+    static inline int nextID = 0;
 };

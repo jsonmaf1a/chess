@@ -3,7 +3,7 @@
 // TODO:
 // * Blocking by other pieces
 // * Castle
-std::vector<sf::Vector2i> Rook::getValidMoves() const
+std::vector<sf::Vector2i> Rook::getLegalMoves() const
 {
     std::vector<sf::Vector2i> moves;
 

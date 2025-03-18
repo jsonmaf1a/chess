@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CursorManager.hpp"
+#include "../managers/CursorManager.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 

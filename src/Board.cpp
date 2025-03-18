@@ -1,11 +1,11 @@
 #include "Board.hpp"
+#include "managers/FontManager.hpp"
 #include "pieces/Bishop.hpp"
 #include "pieces/King.hpp"
 #include "pieces/Knight.hpp"
 #include "pieces/Pawn.hpp"
 #include "pieces/Queen.hpp"
 #include "pieces/Rook.hpp"
-#include "shared/FontManager.hpp"
 #include "shared/Notation.hpp"
 #include "shared/utils/ColorUtils.hpp"
 #include "shared/utils/PositionUtils.hpp"
@@ -24,7 +24,7 @@ void Board::initializePieces()
         }
     }
 
-    print();
+    dumpSelf();
 }
 
 void Board::drawSelf(sf::RenderWindow &window)
@@ -329,22 +329,28 @@ void Board::setSelectedCell(sf::Vector2i cellPosition)
 }
 void Board::resetSelectedCell() { selectedCell = std::nullopt; }
 
-void Board::print()
+void Board::dumpSelf()
 {
+    std::cout << id << "\n";
     for(int col = 0; col < GRID_SIZE; col++)
     {
         for(int row = 0; row < GRID_SIZE; row++)
         {
             auto maybePiece = _board[row][col];
-            if(maybePiece != nullptr)
+            if(maybePiece)
             {
-                std::cout << maybePiece->pieceKindToString()[0] << " ";
+                std::cout << (maybePiece->getKind() == PieceKind::Knight
+                                  ? 'n'
+                                  : maybePiece->pieceKindToString()[0]);
             }
             else
             {
-                std::cout << ". "; // Empty space
+                std::cout << ".";
             }
+            std::cout << " ";
         }
         std::cout << "\n";
     }
+
+    std::cout << "\n";
 }

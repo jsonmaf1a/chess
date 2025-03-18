@@ -1,7 +1,6 @@
 #pragma once
 
-#include "shared/PieceKind.hpp"
-#include "shared/Side.hpp"
+#include "shared/GameData.hpp"
 #include "shared/UIComponent.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -22,7 +21,7 @@ class Piece : public UIComponent
     sf::Texture texture;
     sf::Sprite sprite;
 
-    static std::string getPieceTexturePath(PieceKind kind, Side side);
+    std::string getPieceTexturePath(PieceKind kind, Side side);
 
   public:
     Piece(PieceKind kind, sf::Vector2i position, Side side);
@@ -32,8 +31,8 @@ class Piece : public UIComponent
 
     virtual void drawSelf(sf::RenderWindow &window) override;
 
-    virtual std::vector<sf::Vector2i> getValidMoves() const = 0;
-    bool isValidMove(sf::Vector2i newPosition) const;
+    virtual std::vector<sf::Vector2i> getLegalMoves() const = 0;
+    bool isLegalMove(sf::Vector2i newPosition) const;
 
     void setPosition(sf::Vector2i position);
     sf::Vector2i getPosition() const;

@@ -1,6 +1,7 @@
 #include "Game.hpp"
 #include "Window.hpp"
-#include "shared/FontManager.hpp"
+#include "managers/FontManager.hpp"
+#include "managers/SoundManager.hpp"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -8,6 +9,7 @@
 int main()
 {
     FontManager::loadFonts();
+    SoundManager::loadSounds();
 
     Window window;
 

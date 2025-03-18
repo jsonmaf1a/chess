@@ -5,7 +5,7 @@
 // * En passant
 // * Blocking by other pieces
 // * Pawn promotion
-std::vector<sf::Vector2i> Pawn::getValidMoves() const
+std::vector<sf::Vector2i> Pawn::getLegalMoves() const
 {
     std::vector<sf::Vector2i> moves;
 

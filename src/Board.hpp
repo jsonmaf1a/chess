@@ -44,7 +44,7 @@ class Board : public UIComponent
     void setSelectedCell(sf::Vector2i cellPosition);
     void resetSelectedCell();
 
-    void print();
+    void dumpSelf();
 
   private:
     std::shared_ptr<Piece> _board[GRID_SIZE][GRID_SIZE] = {nullptr};

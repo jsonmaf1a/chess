@@ -1,7 +1,8 @@
 #pragma once
 
-#include "UIManager.hpp"
-#include "shared/CursorManager.hpp"
+#include "managers/CursorManager.hpp"
+#include "managers/EventDispatcher.hpp"
+#include "managers/UIManager.hpp"
 #include "shared/config/Layout.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>

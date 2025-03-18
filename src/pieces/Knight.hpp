@@ -14,5 +14,5 @@ class Knight : public Piece
 
     ~Knight() = default;
 
-    virtual std::vector<sf::Vector2i> getValidMoves() const override;
+    virtual std::vector<sf::Vector2i> getLegalMoves() const override;
 };

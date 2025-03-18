@@ -1,6 +1,6 @@
 #include "Piece.hpp"
 #include "Board.hpp"
-#include "shared/TextureManager.hpp"
+#include "managers/TextureManager.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <math.h>
@@ -43,9 +43,9 @@ sf::Vector2f Piece::normalizeSpritePosition(sf::Vector2i position) const
     return sf::Vector2f(posX, posY);
 }
 
-bool Piece::isValidMove(sf::Vector2i newPosition) const
+bool Piece::isLegalMove(sf::Vector2i newPosition) const
 {
-    auto moves = getValidMoves();
+    auto moves = getLegalMoves();
     auto it = std::find(moves.begin(), moves.end(), newPosition);
 
     return it != moves.end();
@@ -57,7 +57,7 @@ std::string Piece::getPieceTexturePath(PieceKind kind, Side side)
 {
     return std::format("{}/{}/{}.png", BASE_TEXTURES_PATH,
                        (side == Side::White ? "white" : "black"),
-                       pieceKindToString(kind));
+                       pieceKindToString());
 }
 
 std::string Piece::pieceKindToString()

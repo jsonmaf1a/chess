@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "managers/SoundManager.hpp"
 #include "shared/utils/EventUtils.hpp"
 #include "shared/utils/PositionUtils.hpp"
 #include <iostream>
@@ -53,7 +54,7 @@ EventResult Game::handleEvent(const EventContext &eventCtx)
 
 void Game::move(Piece &piece, sf::Vector2i newPosition)
 {
-    if(!piece.isValidMove(newPosition))
+    if(!piece.isLegalMove(newPosition))
     {
         board->resetSelectedCell();
         return;
@@ -65,9 +66,12 @@ void Game::move(Piece &piece, sf::Vector2i newPosition)
     moves.push_back(
         std::make_unique<Move>(piece, piece.getPosition(), newPosition));
 
-    board->highlightMove(*moves[moves.size() - 1]);
+    SoundManager::playSound(SoundKind::MoveSelf);
+
+    board->highlightMove(*moves.back());
     board->updatePiecePosition(selectedPiece.value(), newPosition);
-    board->print();
+    board->dumpSelf();
+    board->dumpChildren();
 
     selectedPiece = std::nullopt;
     nextTurn();

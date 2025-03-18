@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Board.hpp"
-#include "UIManager.hpp"
+#include "managers/UIManager.hpp"
 #include "shared/EventHandler.hpp"
+#include "shared/GameData.hpp"
 #include "shared/Move.hpp"
-#include "shared/Side.hpp"
 #include "shared/config/Layout.hpp"
 
 // TODO:

@@ -14,5 +14,5 @@ class Pawn : public Piece
 
     ~Pawn() = default;
 
-    virtual std::vector<sf::Vector2i> getValidMoves() const override;
+    virtual std::vector<sf::Vector2i> getLegalMoves() const override;
 };

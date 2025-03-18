@@ -2,7 +2,7 @@
 
 // TODO:
 // * Blocking by other pieces
-std::vector<sf::Vector2i> Bishop::getValidMoves() const
+std::vector<sf::Vector2i> Bishop::getLegalMoves() const
 {
     std::vector<sf::Vector2i> moves;
 

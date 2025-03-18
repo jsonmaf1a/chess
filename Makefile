@@ -6,15 +6,17 @@ OBJ = $(SRC:src/%.cpp=lib/%.o)
 
 PIECES_SRC = $(wildcard src/pieces/*.cpp)
 SHARED_SRC = $(wildcard src/shared/*.cpp)
+MANAGERS_SRC = $(wildcard src/managers/*.cpp)
 UTILS_SRC = $(wildcard src/shared/utils/*.cpp)
 CONFIG_SRC = $(wildcard src/shared/config/*.cpp)
 
 PIECES_OBJ = $(PIECES_SRC:src/pieces/%.cpp=lib/pieces/%.o)
 SHARED_OBJ = $(SHARED_SRC:src/shared/%.cpp=lib/shared/%.o)
+MANAGERS_OBJ = $(MANAGERS_SRC:src/managers/%.cpp=lib/managers/%.o)
 UTILS_OBJ = $(UTILS_SRC:src/shared/utils/%.cpp=lib/shared/utils/%.o)
 CONFIG_OBJ = $(CONFIG_SRC:src/shared/config/%.cpp=lib/shared/config/%.o)
 
-ALL_OBJ = $(OBJ) $(UTILS_OBJ) $(SHARED_OBJ) $(PIECES_OBJ) $(CONFIG_OBJ)
+ALL_OBJ = $(OBJ) $(MANAGERS_OBJ) $(UTILS_OBJ) $(SHARED_OBJ) $(PIECES_OBJ) $(CONFIG_OBJ)
 
 BIN = bin/app
 DEPFLAGS = -MMD -MP
@@ -34,7 +36,7 @@ lib/pieces/%.o: src/pieces/%.cpp | build
 	$(CXX) $(CXXFLAGS) $(DEPFLAGS) -c $< -o $@
 
 build:
-	mkdir -p lib lib/pieces lib/shared bin
+	mkdir -p lib lib/pieces lib/shared lib/shared/config lib/managers bin
 
 clean:
 	$(RM) -vr lib bin $(BIN)

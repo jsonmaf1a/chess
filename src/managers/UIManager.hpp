@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../shared/UIComponent.hpp"
 #include "EventDispatcher.hpp"
-#include "shared/UIComponent.hpp"
 #include <memory>
 #include <vector>
 
