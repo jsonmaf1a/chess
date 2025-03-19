@@ -38,6 +38,11 @@ void Board::drawSelf(sf::RenderWindow &window)
         }
     }
 
+    for(const auto &pos : possibleMoves)
+    {
+        drawPossibleMove(window, pos);
+    }
+
     drawLabels(window);
     drawHighlights(window);
 }
@@ -53,6 +58,23 @@ void Board::drawCell(sf::RenderWindow &window, sf::Vector2i position,
     rect.setFillColor(color);
 
     window.draw(rect);
+}
+
+void Board::drawPossibleMove(sf::RenderWindow &window,
+                             const sf::Vector2i &position)
+{
+    constexpr float radius = 15.f;
+
+    sf::CircleShape circle(radius);
+    circle.setPosition(
+        {position.x * Board::CELL_SIZE + Board::CELL_SIZE / 2.f - radius,
+         position.y * Board::CELL_SIZE + Board::CELL_SIZE / 2.f - radius});
+
+    sf::Color color = sf::Color::Black;
+    color.a = 30;
+    circle.setFillColor(color);
+
+    window.draw(circle);
 }
 
 void Board::drawHighlights(sf::RenderWindow &window)
@@ -306,6 +328,13 @@ void Board::setLastMoveCells(const Move &move)
     lastMoveCells = std::make_pair(move.from, move.to);
 }
 
+void Board::setPossibleMoves(const std::vector<sf::Vector2i> &possibleMoves)
+{
+
+    this->possibleMoves = possibleMoves;
+}
+
 void Board::resetSelectedCell() { selectedCell = std::nullopt; }
 void Board::resetHoveredCell() { hoveredCell = std::nullopt; }
 void Board::resetLastMoveCells() { lastMoveCells = std::nullopt; }
+void Board::resetPossibleMoves() { possibleMoves.clear(); }

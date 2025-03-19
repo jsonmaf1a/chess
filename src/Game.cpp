@@ -50,7 +50,10 @@ void Game::handlePieceSelection(const sf::Vector2i &cellPosition,
 {
     selectedPiece = *piece;
     board->setSelectedCell(cellPosition);
-    selectedPiece->get().printLegalMoves(board->getPiecesOnBoard());
+
+    auto legalMoves =
+        selectedPiece->get().getLegalMoves(board->getPiecesOnBoard());
+    board->setPossibleMoves(legalMoves);
 
     printGameState();
 }
@@ -61,6 +64,7 @@ void Game::move(Piece &piece, sf::Vector2i newPosition)
     {
         selectedPiece = std::nullopt;
         board->resetSelectedCell();
+        board->resetPossibleMoves();
         SoundManager::playSound(SoundKind::IllegalMove);
         return;
     }
@@ -76,6 +80,7 @@ void Game::move(Piece &piece, sf::Vector2i newPosition)
     SoundManager::playSound(SoundKind::MoveSelf);
 
     selectedPiece = std::nullopt;
+    board->resetPossibleMoves();
     nextTurn();
 
     printGameState();

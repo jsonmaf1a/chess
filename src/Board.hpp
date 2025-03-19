@@ -35,6 +35,8 @@ class Board : public UIComponent
     static constexpr float CELL_SIZE = 100.f;
 
     virtual void drawSelf(sf::RenderWindow &window) override;
+    void drawPossibleMove(sf::RenderWindow &window,
+                          const sf::Vector2i &position);
     void drawHighlights(sf::RenderWindow &window);
     void drawCell(sf::RenderWindow &window, sf::Vector2i position,
                   sf::Color color = sf::Color::Transparent);
@@ -54,10 +56,12 @@ class Board : public UIComponent
     void setSelectedCell(const sf::Vector2i &cellPosition);
     void setHoveredCell(const sf::Vector2i &cellPosition);
     void setLastMoveCells(const Move &move);
+    void setPossibleMoves(const std::vector<sf::Vector2i> &possibleMoves);
 
     void resetSelectedCell();
     void resetHoveredCell();
     void resetLastMoveCells();
+    void resetPossibleMoves();
 
     const sf::View &getView() const;
     void printSelf() const;
@@ -69,6 +73,7 @@ class Board : public UIComponent
         std::nullopt;
     std::optional<sf::Vector2i> hoveredCell = std::nullopt;
     std::optional<sf::Vector2i> selectedCell = std::nullopt;
+    std::vector<sf::Vector2i> possibleMoves;
 
     // TODO: intoduce theme manager and use it to get colors and shit
     static constexpr sf::Color colorDark = {119, 148, 85, 255};
