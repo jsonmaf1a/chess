@@ -57,20 +57,19 @@ void Board::drawCell(sf::RenderWindow &window, sf::Vector2i position,
 
 void Board::drawHighlights(sf::RenderWindow &window)
 {
-    constexpr int HIGHLIGHT_OPACITY = 30;
+    constexpr int HIGHLIGHT_OPACITY = 60;
 
-    auto createHighlightColor = [](sf::Color baseColor) {
-        baseColor.a = HIGHLIGHT_OPACITY;
-        return baseColor;
+    auto createHighlightColor = [](sf::Color color,
+                                   int alpha = HIGHLIGHT_OPACITY) {
+        color.a = alpha;
+        return color;
     };
 
     if(hoveredCell)
     {
-        sf::Color color = selectedCell && hoveredCell == selectedCell
-                              ? sf::Color::White
-                              : sf::Color::White;
+        sf::Color color = sf::Color::Black;
 
-        drawCell(window, hoveredCell.value(), createHighlightColor(color));
+        drawCell(window, hoveredCell.value(), createHighlightColor(color, 10));
     }
 
     if(selectedCell)

@@ -6,7 +6,7 @@ Window::Window(uint width, uint height, const std::string &title)
     : ui(dispatcher)
     , cursorManager(window)
 {
-    window.create(sf::VideoMode({width, height}), title, sf::Style::None,
+    window.create(sf::VideoMode({width, height}), title, sf::Style::Default,
                   sf::State::Windowed);
     window.setVerticalSyncEnabled(true);
 

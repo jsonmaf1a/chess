@@ -23,25 +23,29 @@ Piece::Piece(PieceKind kind, sf::Vector2i position, Side side)
     sf::FloatRect spriteBounds = sprite.getLocalBounds();
     sprite.setOrigin({spriteBounds.size.x / 2.0f, spriteBounds.size.y / 2.0f});
 
-    setPosition(sf::Vector2f(position));
+    setPosition(position);
 }
 
 void Piece::drawSelf(sf::RenderWindow &window) { window.draw(sprite); };
 
-void Piece::setPosition(sf::Vector2f position)
+void Piece::setPosition(sf::Vector2i position)
 {
     this->currentPosition = position;
-    sprite.setPosition(normalizeSpritePosition(position));
+    sprite.setPosition(
+        normalizeSpritePosition(static_cast<sf::Vector2f>(position)));
 }
 
 void Piece::updatePositionWithTransition(sf::Vector2f position)
 {
     auto positionTransition =
         std::make_shared<PropertyTransition<sf::Vector2f>>(
-            currentPosition, position, 0.5f,
-            [&](sf::Vector2f newPosition) { setPosition(newPosition); });
-
+            static_cast<sf::Vector2f>(currentPosition), position, 0.5f,
+            [&](sf::Vector2f newPosition) {
+                sprite.setPosition(normalizeSpritePosition(newPosition));
+            });
     TransitionManager::addTransition(positionTransition);
+
+    this->currentPosition = static_cast<sf::Vector2i>(position);
 }
 
 sf::Vector2f Piece::normalizeSpritePosition(sf::Vector2f position) const
@@ -63,7 +67,7 @@ bool Piece::isLegalMove(std::vector<std::shared_ptr<Piece>> onBoard,
     return it != moves.end();
 };
 
-sf::Vector2f Piece::getPosition() const { return currentPosition; }
+sf::Vector2i Piece::getPosition() const { return currentPosition; }
 
 std::string Piece::getPieceTexturePath(PieceKind kind, Side side)
 {
@@ -72,7 +76,7 @@ std::string Piece::getPieceTexturePath(PieceKind kind, Side side)
                        getStringifiedKind());
 }
 
-std::string_view Piece::getStringifiedKind()
+std::string_view Piece::getStringifiedKind() const
 {
     return Piece::pieceKindToString(kind);
 }
@@ -122,5 +126,5 @@ void Piece::printLegalMoves(std::vector<std::shared_ptr<Piece>> onBoard) const
 void Piece::printSelf() const
 {
     std::cout << (side == Side::White ? "white" : "black") << " "
-              << pieceKindToString(kind);
+              << getStringifiedKind();
 }

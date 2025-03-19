@@ -57,11 +57,11 @@ void Game::handlePieceSelection(const sf::Vector2i &cellPosition,
 
 void Game::move(Piece &piece, sf::Vector2i newPosition)
 {
-    std::cout << "\nok\n\n";
     if(!piece.isLegalMove(board->getPiecesOnBoard(), newPosition))
     {
-        SoundManager::playSound(SoundKind::IllegalMove);
         selectedPiece = std::nullopt;
+        board->resetSelectedCell();
+        SoundManager::playSound(SoundKind::IllegalMove);
         return;
     }
 
@@ -71,9 +71,9 @@ void Game::move(Piece &piece, sf::Vector2i newPosition)
     moves.push_back(std::make_unique<Move>(
         piece, static_cast<sf::Vector2i>(piece.getPosition()), newPosition));
 
-    SoundManager::playSound(SoundKind::MoveSelf);
     board->setLastMoveCells(*moves.back());
     board->updatePiecePosition(piece, newPosition);
+    SoundManager::playSound(SoundKind::MoveSelf);
 
     selectedPiece = std::nullopt;
     nextTurn();
@@ -94,6 +94,6 @@ void Game::printGameState()
 
     std::cout << "SELECTED PIECE: ";
     if(selectedPiece.has_value())
-        selectedPiece->get().printSelf();
+        selectedPiece.value().get().printSelf();
     std::cout << "\n";
 }

@@ -16,7 +16,7 @@ class Piece : public UIComponent
 
     const PieceKind kind;
     const Side side;
-    sf::Vector2f currentPosition;
+    sf::Vector2i currentPosition;
     sf::Texture texture;
     sf::Sprite sprite;
 
@@ -34,16 +34,16 @@ class Piece : public UIComponent
         std::vector<std::shared_ptr<Piece>> onBoard) const = 0;
     bool isLegalMove(std::vector<std::shared_ptr<Piece>> onBoard,
                      sf::Vector2i newPosition) const;
-    void setPosition(sf::Vector2f position);
+    void setPosition(sf::Vector2i position);
     void updatePositionWithTransition(sf::Vector2f position);
-    sf::Vector2f getPosition() const;
+    sf::Vector2i getPosition() const;
     sf::Vector2f normalizeSpritePosition(sf::Vector2f position) const;
 
     Side getSide() const;
     PieceKind getKind() const;
 
     static std::string_view pieceKindToString(PieceKind kind);
-    std::string_view getStringifiedKind();
+    std::string_view getStringifiedKind() const;
 
     void printLegalMoves(std::vector<std::shared_ptr<Piece>> onBoard) const;
     void printSelf() const;
