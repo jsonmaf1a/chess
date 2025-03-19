@@ -11,6 +11,7 @@ class Piece : public UIComponent
   protected:
     static constexpr int SPRITE_SIZE = 100;
     static constexpr float SPRITE_SCALE = 1.0f;
+    static constexpr sf::Vector2i SPRITE_INITIAL_POSITION = {0, 0};
     static constexpr const char *BASE_TEXTURES_PATH =
         "./assets/textures/pieces/";
 
@@ -23,7 +24,7 @@ class Piece : public UIComponent
     std::string getPieceTexturePath(PieceKind kind, Side side);
 
   public:
-    Piece(PieceKind kind, sf::Vector2i position, Side side);
+    Piece(PieceKind kind, Side side, sf::Vector2i position);
     ~Piece() = default;
 
     bool wasMoved = false;

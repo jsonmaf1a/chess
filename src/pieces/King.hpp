@@ -8,8 +8,8 @@ class King : public Piece
     static constexpr PieceKind kind = PieceKind::King;
 
   public:
-    King(sf::Vector2i position, Side side)
-        : Piece(kind, position, side)
+    King(Side side, sf::Vector2i position = SPRITE_INITIAL_POSITION)
+        : Piece(kind, side, position)
     {}
 
     ~King() = default;

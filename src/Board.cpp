@@ -165,9 +165,10 @@ std::vector<std::shared_ptr<Piece>> Board::getPiecesOnBoard()
     {
         for(int j = 0; j < GRID_SIZE; ++j)
         {
-            if(_board[i][j] != nullptr)
+            auto &piece = _board[i][j];
+            if(piece != nullptr)
             {
-                filtered.push_back(_board[i][j]);
+                filtered.push_back(piece);
             }
         }
     }
@@ -186,72 +187,55 @@ void Board::updatePiecePosition(Piece &piece, sf::Vector2i &newPosition)
     piece.updatePositionWithTransition(sf::Vector2f{newPosition});
 }
 
+template <typename T>
+    requires std::is_base_of<Piece, T>::value
+void Board::placePiece(const std::string &pos, Side side)
+{
+    auto [row, col] = Notation::fromChessNotation(pos);
+
+    std::shared_ptr<Piece> piece = std::make_shared<T>(side);
+    piece->setPosition({row, col});
+
+    _board[row][col] = std::move(piece);
+}
+
 void Board::createPieces()
 {
-    static constexpr int WHITE_PAWNS_ROW = 2;
-    static constexpr int BLACK_PAWNS_ROW = 7;
-
-    auto placePiece = [&](const std::string &pos, auto piece) {
-        auto [row, col] = Notation::fromChessNotation(pos);
-        _board[row][col] = std::move(piece);
-    };
+    static constexpr std::string WHITE_PAWNS_ROW = "2";
+    static constexpr std::string BLACK_PAWNS_ROW = "7";
 
     // =============== Pawns =================
     for(char file = 'A'; file <= 'H'; file++)
     {
-        placePiece(
-            std::format("{}{}", file, WHITE_PAWNS_ROW),
-            std::make_shared<Pawn>(Notation::fromChessNotation(std::format(
-                                       "{}{}", file, WHITE_PAWNS_ROW)),
-                                   Side::White));
-        placePiece(
-            std::format("{}{}", file, BLACK_PAWNS_ROW),
-            std::make_shared<Pawn>(Notation::fromChessNotation(std::format(
-                                       "{}{}", file, BLACK_PAWNS_ROW)),
-                                   Side::Black));
+        placePiece<Pawn>(file + WHITE_PAWNS_ROW, Side::White);
+        placePiece<Pawn>(file + BLACK_PAWNS_ROW, Side::Black);
     }
 
     // =============== Rooks =================
-    placePiece("A1", std::make_shared<Rook>(Notation::fromChessNotation("A1"),
-                                            Side::White));
-    placePiece("H1", std::make_shared<Rook>(Notation::fromChessNotation("H1"),
-                                            Side::White));
-    placePiece("A8", std::make_shared<Rook>(Notation::fromChessNotation("A8"),
-                                            Side::Black));
-    placePiece("H8", std::make_shared<Rook>(Notation::fromChessNotation("H8"),
-                                            Side::Black));
+    placePiece<Rook>("A1", Side::White);
+    placePiece<Rook>("H1", Side::White);
+    placePiece<Rook>("A8", Side::Black);
+    placePiece<Rook>("H8", Side::Black);
 
     // =============== Knights ===============
-    placePiece("B1", std::make_shared<Knight>(Notation::fromChessNotation("B1"),
-                                              Side::White));
-    placePiece("G1", std::make_shared<Knight>(Notation::fromChessNotation("G1"),
-                                              Side::White));
-    placePiece("B8", std::make_shared<Knight>(Notation::fromChessNotation("B8"),
-                                              Side::Black));
-    placePiece("G8", std::make_shared<Knight>(Notation::fromChessNotation("G8"),
-                                              Side::Black));
+    placePiece<Knight>("B1", Side::White);
+    placePiece<Knight>("G1", Side::White);
+    placePiece<Knight>("B8", Side::Black);
+    placePiece<Knight>("G8", Side::Black);
 
     // =============== Bishops ===============
-    placePiece("C1", std::make_shared<Bishop>(Notation::fromChessNotation("C1"),
-                                              Side::White));
-    placePiece("F1", std::make_shared<Bishop>(Notation::fromChessNotation("F1"),
-                                              Side::White));
-    placePiece("C8", std::make_shared<Bishop>(Notation::fromChessNotation("C8"),
-                                              Side::Black));
-    placePiece("F8", std::make_shared<Bishop>(Notation::fromChessNotation("F8"),
-                                              Side::Black));
+    placePiece<Bishop>("C1", Side::White);
+    placePiece<Bishop>("F1", Side::White);
+    placePiece<Bishop>("C8", Side::Black);
+    placePiece<Bishop>("F8", Side::Black);
 
     // =============== Queens =================
-    placePiece("D1", std::make_shared<Queen>(Notation::fromChessNotation("D1"),
-                                             Side::White));
-    placePiece("D8", std::make_shared<Queen>(Notation::fromChessNotation("D8"),
-                                             Side::Black));
+    placePiece<Queen>("D1", Side::White);
+    placePiece<Queen>("D8", Side::Black);
 
     // =============== Kings ==================
-    placePiece("E1", std::make_shared<King>(Notation::fromChessNotation("E1"),
-                                            Side::White));
-    placePiece("E8", std::make_shared<King>(Notation::fromChessNotation("E8"),
-                                            Side::Black));
+    placePiece<King>("E1", Side::White);
+    placePiece<King>("E8", Side::Black);
 }
 
 sf::Color Board::getCellColor(int cellPosition) const

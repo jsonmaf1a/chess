@@ -8,8 +8,8 @@ class Rook : public Piece
     static constexpr PieceKind kind = PieceKind::Rook;
 
   public:
-    Rook(sf::Vector2i position, Side side)
-        : Piece(kind, position, side)
+    Rook(Side side, sf::Vector2i position = SPRITE_INITIAL_POSITION)
+        : Piece(kind, side, position)
     {}
 
     ~Rook() = default;

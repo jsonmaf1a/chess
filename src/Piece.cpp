@@ -9,7 +9,7 @@
 #include <iostream>
 #include <math.h>
 
-Piece::Piece(PieceKind kind, sf::Vector2i position, Side side)
+Piece::Piece(PieceKind kind, Side side, sf::Vector2i position)
     : UIComponent({SPRITE_SIZE, SPRITE_SIZE})
     , currentPosition(position)
     , kind(kind)

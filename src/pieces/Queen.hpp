@@ -8,8 +8,8 @@ class Queen : public Piece
     static constexpr PieceKind kind = PieceKind::Queen;
 
   public:
-    Queen(sf::Vector2i position, Side side)
-        : Piece(kind, position, side)
+    Queen(Side side, sf::Vector2i position = SPRITE_INITIAL_POSITION)
+        : Piece(kind, side, position)
     {}
 
     ~Queen() = default;

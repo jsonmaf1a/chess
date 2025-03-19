@@ -8,8 +8,8 @@ class Pawn : public Piece
     static constexpr PieceKind kind = PieceKind::Pawn;
 
   public:
-    Pawn(sf::Vector2i position, Side side)
-        : Piece(kind, position, side)
+    Pawn(Side side, sf::Vector2i position = SPRITE_INITIAL_POSITION)
+        : Piece(kind, side, position)
     {}
 
     ~Pawn() = default;

@@ -77,4 +77,8 @@ class Board : public UIComponent
     void drawLabels(sf::RenderWindow &window);
     sf::Color getCellColor(int position) const;
     bool isMouseOverCell(sf::Vector2i mousePos);
+
+    template <typename T>
+        requires std::is_base_of<Piece, T>::value
+    void placePiece(const std::string &pos, Side side);
 };

@@ -8,8 +8,8 @@ class Bishop : public Piece
     static constexpr PieceKind kind = PieceKind::Bishop;
 
   public:
-    Bishop(sf::Vector2i position, Side side)
-        : Piece(kind, position, side)
+    Bishop(Side side, sf::Vector2i position = SPRITE_INITIAL_POSITION)
+        : Piece(kind, side, position)
     {}
 
     ~Bishop() = default;
