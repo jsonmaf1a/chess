@@ -22,11 +22,11 @@ class Window
 
     void update();
     void pollEvents();
+    bool isOpen() const;
+
     sf::RenderWindow &getRenderWindow();
     EventDispatcher &getEventDispatcher();
     UIManager &getUI();
-
-    bool isOpen() const;
 
   private:
     sf::RenderWindow window;

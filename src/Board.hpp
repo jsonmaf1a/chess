@@ -9,6 +9,14 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
+struct Vector2fHash
+{
+    std::size_t operator()(const sf::Vector2f &v) const
+    {
+        return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
+    }
+};
+
 class Board : public UIComponent
 {
   public:
@@ -26,33 +34,41 @@ class Board : public UIComponent
     static constexpr int GRID_SIZE = 8;
     static constexpr float CELL_SIZE = 100.f;
 
-    // std::vector<std::shared_ptr<Piece>> pieces;
     virtual void drawSelf(sf::RenderWindow &window) override;
-    virtual EventResult handleSelfEvent(const EventContext &eventCtx) override;
-    void initializePieces();
-    void createPieces();
-    const sf::View &getView() const;
-    void updatePiecePosition(Piece &piece, sf::Vector2i newPosition);
-    std::shared_ptr<Piece> getPiece(sf::Vector2i cellPosition) const;
+    void drawHighlights(sf::RenderWindow &window);
+    void drawCell(sf::RenderWindow &window, sf::Vector2i position,
+                  sf::Color color = sf::Color::Transparent);
+
     sf::Vector2i getCellFromMousePos(const sf::Vector2i &mousePos,
                                      const sf::RenderWindow &window,
                                      const sf::View &view) const;
-    std::shared_ptr<Piece> getPieceAt(sf::Vector2i cellPosition) const;
-    void highlight(sf::Vector2i cell);
-    void highlightMove(Move &move);
-    void resetMoveHighlighting();
-    void setSelectedCell(sf::Vector2i cellPosition);
-    void resetSelectedCell();
 
-    void dumpSelf();
+    virtual EventResult handleSelfEvent(const EventContext &eventCtx) override;
+
+    void initializePieces();
+    void createPieces();
+    void updatePiecePosition(Piece &piece, sf::Vector2i &newPosition);
+    std::shared_ptr<Piece> getPiece(sf::Vector2i cellPosition) const;
+    std::vector<std::shared_ptr<Piece>> getPiecesOnBoard();
+
+    void setSelectedCell(const sf::Vector2i &cellPosition);
+    void setHoveredCell(const sf::Vector2i &cellPosition);
+    void setLastMoveCells(const Move &move);
+
+    void resetSelectedCell();
+    void resetHoveredCell();
+    void resetLastMoveCells();
+
+    const sf::View &getView() const;
+    void printSelf() const;
 
   private:
     std::shared_ptr<Piece> _board[GRID_SIZE][GRID_SIZE] = {nullptr};
 
+    std::optional<std::pair<sf::Vector2i, sf::Vector2i>> lastMoveCells =
+        std::nullopt;
     std::optional<sf::Vector2i> hoveredCell = std::nullopt;
     std::optional<sf::Vector2i> selectedCell = std::nullopt;
-    std::optional<std::pair<sf::Vector2i, sf::Vector2i>> highlightedMoveCells =
-        std::nullopt;
 
     // TODO: intoduce theme manager and use it to get colors and shit
     static constexpr sf::Color colorDark = {119, 148, 85, 255};
@@ -61,5 +77,4 @@ class Board : public UIComponent
     void drawLabels(sf::RenderWindow &window);
     sf::Color getCellColor(int position) const;
     bool isMouseOverCell(sf::Vector2i mousePos);
-    void resetHoveredCell();
 };

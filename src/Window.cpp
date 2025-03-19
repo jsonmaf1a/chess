@@ -32,19 +32,6 @@ void Window::update()
     window.display();
 }
 
-void Window::handleKeyPress(const sf::Event::KeyPressed &event)
-{
-    switch(event.code)
-    {
-        case sf::Keyboard::Key::Escape:
-            window.close();
-            break;
-
-        default:
-            break;
-    }
-}
-
 void Window::pollEvents()
 {
     while(const std::optional event = window.pollEvent())
@@ -52,13 +39,14 @@ void Window::pollEvents()
         if(event->is<sf::Event::Closed>())
             window.close();
 
-        if(auto keyPressedEvent = event->getIf<sf::Event::KeyPressed>())
-            handleKeyPress(*keyPressedEvent);
+        if(const auto *keyPressed = event->getIf<sf::Event::KeyPressed>())
+            if(keyPressed->code == sf::Keyboard::Key::Escape)
+                window.close();
 
         if(EventUtils::isMouseEvent(event.value()))
         {
             dispatcher.dispatch(
-                EventContext{event.value(), window, cursorManager});
+                EventContext(event.value(), window, cursorManager));
         }
     }
 }

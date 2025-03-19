@@ -42,7 +42,7 @@ class UIComponent : public EventHandler
 
     void addChild(std::shared_ptr<UIComponent> child);
     void removeChild(std::shared_ptr<UIComponent> child);
-    void dumpChildren() const;
+    void printChildren() const;
     void setVisible(bool visible);
     bool isVisible() const;
     void setEnabled(bool enabled);

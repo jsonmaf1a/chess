@@ -22,62 +22,78 @@ EventResult Game::handleEvent(const EventContext &eventCtx)
         auto cellPosition =
             board->getCellFromMousePos(mousePos, window, board->getView());
 
-        auto maybePiece = board->getPiece(cellPosition);
+        std::shared_ptr<Piece> maybePiece = board->getPiece(cellPosition);
 
         if(maybePiece && maybePiece->getSide() == currentSide)
         {
-            selectedPiece = *maybePiece;
-            board->setSelectedCell(cellPosition);
-
-            auto side = selectedPiece->get().getSide() == Side::White ? "white"
-                                                                      : "black";
-            // std::cout << Piece::pieceKindToString(piece->getKind()) << " "
-            //           << side << "\n";
-
-            std::cout << Piece::pieceKindToString(
-                             selectedPiece->get().getKind())
-                      << " " << side << "\n";
+            handlePieceSelection(cellPosition, maybePiece);
+            return EventResult::Consumed;
         }
-        else if(selectedPiece && !maybePiece)
+
+        if(selectedPiece.has_value())
         {
             move(selectedPiece->get(), cellPosition);
+            return EventResult::Consumed;
         }
-        else
-        {
-            selectedPiece = std::nullopt;
-            std::cout << "nothing" << "\n";
-        }
+
+        std::cout << "nothing\n";
+        selectedPiece = std::nullopt;
+        printGameState();
+        return EventResult::Consumed;
     }
 
     return EventResult::Ignored;
 }
 
+void Game::handlePieceSelection(const sf::Vector2i &cellPosition,
+                                const std::shared_ptr<Piece> piece)
+{
+    selectedPiece = *piece;
+    board->setSelectedCell(cellPosition);
+    selectedPiece->get().printLegalMoves(board->getPiecesOnBoard());
+
+    printGameState();
+}
+
 void Game::move(Piece &piece, sf::Vector2i newPosition)
 {
-    if(!piece.isLegalMove(newPosition))
+    std::cout << "\nok\n\n";
+    if(!piece.isLegalMove(board->getPiecesOnBoard(), newPosition))
     {
-        board->resetSelectedCell();
+        SoundManager::playSound(SoundKind::IllegalMove);
+        selectedPiece = std::nullopt;
         return;
     }
 
     if(!piece.wasMoved)
         piece.wasMoved = true;
 
-    moves.push_back(
-        std::make_unique<Move>(piece, piece.getPosition(), newPosition));
+    moves.push_back(std::make_unique<Move>(
+        piece, static_cast<sf::Vector2i>(piece.getPosition()), newPosition));
 
     SoundManager::playSound(SoundKind::MoveSelf);
-
-    board->highlightMove(*moves.back());
-    board->updatePiecePosition(selectedPiece.value(), newPosition);
-    board->dumpSelf();
-    board->dumpChildren();
+    board->setLastMoveCells(*moves.back());
+    board->updatePiecePosition(piece, newPosition);
 
     selectedPiece = std::nullopt;
     nextTurn();
+
+    printGameState();
 }
 
 void Game::nextTurn()
 {
     currentSide = currentSide == Side::White ? Side::Black : Side::White;
+}
+
+void Game::printGameState()
+{
+    std::cout << "BOARD:" << "\n";
+    board->printSelf();
+    std::cout << "\n\n";
+
+    std::cout << "SELECTED PIECE: ";
+    if(selectedPiece.has_value())
+        selectedPiece->get().printSelf();
+    std::cout << "\n";
 }

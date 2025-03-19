@@ -17,6 +17,7 @@ class Game : public EventHandler
   public:
     Game(sf::RenderWindow &window, UIManager &ui)
         : window(window)
+        , ui(ui)
         , board(std::make_shared<Board>(window, Layout::BoardBounds,
                                         Layout::BoardViewport))
     {
@@ -30,11 +31,15 @@ class Game : public EventHandler
     bool isCheckmate();
     bool isStalemate();
     bool isPawnPromotion();
-
+    void handlePieceSelection(const sf::Vector2i &cellPosition,
+                              const std::shared_ptr<Piece> maybePiece);
     virtual EventResult handleEvent(const EventContext &eventCtx) override;
+
+    void printGameState();
 
   private:
     sf::RenderWindow &window;
+    UIManager &ui;
     std::shared_ptr<Board> board;
     std::vector<std::unique_ptr<Move>> moves;
     std::optional<std::reference_wrapper<Piece>> selectedPiece;

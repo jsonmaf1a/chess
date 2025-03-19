@@ -14,5 +14,6 @@ class Queen : public Piece
 
     ~Queen() = default;
 
-    virtual std::vector<sf::Vector2i> getLegalMoves() const override;
+    virtual std::vector<sf::Vector2i> getLegalMoves(
+        std::vector<std::shared_ptr<Piece>> onBoard) const override;
 };

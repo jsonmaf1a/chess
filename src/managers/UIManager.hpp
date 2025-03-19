@@ -20,4 +20,5 @@ class UIManager
   private:
     std::vector<std::shared_ptr<UIComponent>> rootComponents;
     EventDispatcher &dispatcher;
+    sf::Clock clock;
 };

@@ -6,16 +6,20 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 
-int main()
+void preloadAssets()
 {
     FontManager::loadFonts();
     SoundManager::loadSounds();
+}
+
+int main()
+{
+    preloadAssets();
 
     Window window;
 
     auto game =
         std::make_shared<Game>(window.getRenderWindow(), window.getUI());
-
     window.getEventDispatcher().registerListener(game);
 
     while(window.isOpen())

@@ -16,6 +16,7 @@ struct Notation
     {}
 
     static Notation toChessNotation(const sf::Vector2i &pos);
+    static Notation toChessNotation(const sf::Vector2f &pos);
     static sf::Vector2i fromChessNotation(const Notation &notation);
     static sf::Vector2i fromChessNotation(const std::string &notation);
 

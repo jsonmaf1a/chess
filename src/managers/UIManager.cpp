@@ -1,6 +1,13 @@
 #include "UIManager.hpp"
 #include "../Sidebar.hpp"
 #include "../shared/config/Layout.hpp"
+#include "TransitionManager.hpp"
+
+void UIManager::init(sf::RenderWindow &window)
+{
+    addComponent(std::make_shared<Sidebar>(window, Layout::SidebarBounds,
+                                           Layout::SidebarViewport));
+}
 
 void UIManager::addComponent(std::shared_ptr<UIComponent> component)
 {
@@ -32,13 +39,9 @@ void UIManager::draw(sf::RenderWindow &window)
 {
     for(auto &component : rootComponents)
     {
+        float dt = clock.restart().asSeconds();
+        TransitionManager::update(dt);
+
         component->draw(window);
     }
-}
-
-void UIManager::init(sf::RenderWindow &window)
-{
-
-    addComponent(std::make_shared<Sidebar>(window, Layout::SidebarBounds,
-                                           Layout::SidebarViewport));
 }

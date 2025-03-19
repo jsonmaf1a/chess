@@ -68,7 +68,7 @@ void UIComponent::setBounds(const sf::FloatRect &bounds)
 
 const sf::FloatRect &UIComponent::getBounds() const { return bounds; }
 
-void UIComponent::dumpChildren() const
+void UIComponent::printChildren() const
 {
 
     auto _children = this->children;
@@ -78,13 +78,11 @@ void UIComponent::dumpChildren() const
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-    std::cout << "\n"
-              << std::string(w.ws_col, '-') << std::endl; // Print dashes
+    std::cout << "\n" << std::string(w.ws_col, '-') << std::endl;
 
     for(auto &child : _children)
     {
         std::cout << child->id << " ";
     }
-    std::cout << "\n"
-              << std::string(w.ws_col, '-') << std::endl; // Print dashes
+    std::cout << "\n" << std::string(w.ws_col, '-') << std::endl;
 }

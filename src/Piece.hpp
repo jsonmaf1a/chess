@@ -10,14 +10,13 @@ class Piece : public UIComponent
 {
   protected:
     static constexpr int SPRITE_SIZE = 100;
-    static constexpr float SCALE = 1.0f;
+    static constexpr float SPRITE_SCALE = 1.0f;
     static constexpr const char *BASE_TEXTURES_PATH =
         "./assets/textures/pieces/";
 
     const PieceKind kind;
-
-    Side side;
-    sf::Vector2i currentPosition;
+    const Side side;
+    sf::Vector2f currentPosition;
     sf::Texture texture;
     sf::Sprite sprite;
 
@@ -31,15 +30,21 @@ class Piece : public UIComponent
 
     virtual void drawSelf(sf::RenderWindow &window) override;
 
-    virtual std::vector<sf::Vector2i> getLegalMoves() const = 0;
-    bool isLegalMove(sf::Vector2i newPosition) const;
+    virtual std::vector<sf::Vector2i> getLegalMoves(
+        std::vector<std::shared_ptr<Piece>> onBoard) const = 0;
+    bool isLegalMove(std::vector<std::shared_ptr<Piece>> onBoard,
+                     sf::Vector2i newPosition) const;
+    void setPosition(sf::Vector2f position);
+    void updatePositionWithTransition(sf::Vector2f position);
+    sf::Vector2f getPosition() const;
+    sf::Vector2f normalizeSpritePosition(sf::Vector2f position) const;
 
-    void setPosition(sf::Vector2i position);
-    sf::Vector2i getPosition() const;
     Side getSide() const;
     PieceKind getKind() const;
 
-    static std::string pieceKindToString(PieceKind kind);
-    std::string pieceKindToString();
-    sf::Vector2f normalizeSpritePosition(sf::Vector2i position) const;
+    static std::string_view pieceKindToString(PieceKind kind);
+    std::string_view getStringifiedKind();
+
+    void printLegalMoves(std::vector<std::shared_ptr<Piece>> onBoard) const;
+    void printSelf() const;
 };

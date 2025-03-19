@@ -7,7 +7,6 @@
 #include "pieces/Queen.hpp"
 #include "pieces/Rook.hpp"
 #include "shared/Notation.hpp"
-#include "shared/utils/ColorUtils.hpp"
 #include "shared/utils/PositionUtils.hpp"
 #include <iostream>
 
@@ -24,7 +23,7 @@ void Board::initializePieces()
         }
     }
 
-    dumpSelf();
+    printSelf();
 }
 
 void Board::drawSelf(sf::RenderWindow &window)
@@ -35,33 +34,57 @@ void Board::drawSelf(sf::RenderWindow &window)
     {
         for(int col = 0; col < GRID_SIZE; col++)
         {
-            sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-            cell.setPosition({col * CELL_SIZE, row * CELL_SIZE});
-
-            sf::Color cellColor = getCellColor(row + col);
-
-            if(hoveredCell && hoveredCell == sf::Vector2i{col, row})
-                cellColor = ColorUtils::dim(cellColor);
-
-            sf::Vector2i currentCell = sf::Vector2i{col, row};
-
-            if(highlightedMoveCells &&
-                   highlightedMoveCells.value().first == currentCell ||
-               highlightedMoveCells &&
-                   highlightedMoveCells.value().second == currentCell ||
-               selectedCell == currentCell)
-            {
-                cellColor =
-                    ColorUtils::blend(cellColor, sf::Color::Yellow, 0.4f);
-            }
-
-            cell.setFillColor(cellColor);
-
-            window.draw(cell);
+            drawCell(window, {col, row});
         }
     }
 
     drawLabels(window);
+    drawHighlights(window);
+}
+
+void Board::drawCell(sf::RenderWindow &window, sf::Vector2i position,
+                     sf::Color color)
+{
+    if(color == sf::Color::Transparent)
+        color = getCellColor(position.x + position.y);
+
+    sf::RectangleShape rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+    rect.setPosition({position.x * CELL_SIZE, position.y * CELL_SIZE});
+    rect.setFillColor(color);
+
+    window.draw(rect);
+}
+
+void Board::drawHighlights(sf::RenderWindow &window)
+{
+    constexpr int HIGHLIGHT_OPACITY = 30;
+
+    auto createHighlightColor = [](sf::Color baseColor) {
+        baseColor.a = HIGHLIGHT_OPACITY;
+        return baseColor;
+    };
+
+    if(hoveredCell)
+    {
+        sf::Color color = selectedCell && hoveredCell == selectedCell
+                              ? sf::Color::White
+                              : sf::Color::White;
+
+        drawCell(window, hoveredCell.value(), createHighlightColor(color));
+    }
+
+    if(selectedCell)
+    {
+        drawCell(window, selectedCell.value(),
+                 createHighlightColor(sf::Color::Yellow));
+    }
+
+    if(lastMoveCells)
+    {
+        sf::Color highlightColor = createHighlightColor(sf::Color::Yellow);
+        drawCell(window, lastMoveCells.value().first, highlightColor);
+        drawCell(window, lastMoveCells.value().second, highlightColor);
+    }
 }
 
 void Board::drawLabels(sf::RenderWindow &window)
@@ -114,7 +137,8 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
             return EventResult::Handled;
         }
 
-        auto cellPosition = getCellFromMousePos(mousePos, window, view.value());
+        auto cellPosition =
+            sf::Vector2i(getCellFromMousePos(mousePos, window, view.value()));
 
         if(isMouseOverCell(cellPosition))
         {
@@ -122,7 +146,7 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
                 return EventResult::Consumed;
 
             cursorManager.setHandCursor();
-            hoveredCell = cellPosition;
+            setHoveredCell(cellPosition);
 
             std::cout << "Hovered cell: "
                       << Notation::toChessNotation(cellPosition) << "\n";
@@ -134,86 +158,34 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
     return EventResult::Ignored;
 }
 
-void Board::updatePiecePosition(Piece &piece, sf::Vector2i newPosition)
+std::vector<std::shared_ptr<Piece>> Board::getPiecesOnBoard()
 {
-    sf::Vector2i piecePosition = piece.getPosition();
-    auto p = _board[piecePosition.x][piecePosition.y];
+    std::vector<std::shared_ptr<Piece>> filtered;
+
+    for(int i = 0; i < GRID_SIZE; ++i)
+    {
+        for(int j = 0; j < GRID_SIZE; ++j)
+        {
+            if(_board[i][j] != nullptr)
+            {
+                filtered.push_back(_board[i][j]);
+            }
+        }
+    }
+
+    return filtered;
+}
+
+void Board::updatePiecePosition(Piece &piece, sf::Vector2i &newPosition)
+{
+    sf::Vector2i piecePosition = sf::Vector2i{piece.getPosition()};
+
+    auto _piece = _board[piecePosition.x][piecePosition.y];
     _board[piecePosition.x][piecePosition.y] = nullptr;
-    _board[newPosition.x][newPosition.y] = std::move(p);
-    piece.setPosition(newPosition);
-}
+    _board[newPosition.x][newPosition.y] = std::move(_piece);
 
-std::shared_ptr<Piece> Board::getPieceAt(sf::Vector2i cellPosition) const
-{
-    return _board[cellPosition.x][cellPosition.y];
+    piece.updatePositionWithTransition(sf::Vector2f{newPosition});
 }
-
-// void Board::createPieces()
-// {
-//     static constexpr int WHITE_PAWNS_ROW = 2;
-//     static constexpr int BLACK_PAWNS_ROW = 7;
-//
-//     // =============== Pawns =================
-//     for(char file = 'A'; file <= 'H'; file++)
-//     {
-//         pieces.push_back(
-//             std::make_shared<Pawn>(Notation::fromChessNotation(std::format(
-//                                        "{}{}", file, WHITE_PAWNS_ROW)),
-//                                    Side::White));
-//         pieces.push_back(
-//             std::make_shared<Pawn>(Notation::fromChessNotation(std::format(
-//                                        "{}{}", file, BLACK_PAWNS_ROW)),
-//                                    Side::Black));
-//     }
-//
-//     // =============== Rooks =================
-//     pieces.push_back(
-//         std::make_shared<Rook>(Notation::fromChessNotation("A1"),
-//         Side::White));
-//     pieces.push_back(
-//         std::make_shared<Rook>(Notation::fromChessNotation("H1"),
-//         Side::White));
-//     pieces.push_back(
-//         std::make_shared<Rook>(Notation::fromChessNotation("A8"),
-//         Side::Black));
-//     pieces.push_back(
-//         std::make_shared<Rook>(Notation::fromChessNotation("H8"),
-//         Side::Black));
-//
-//     // =============== Knights ===============
-//     pieces.push_back(std::make_shared<Knight>(Notation::fromChessNotation("B1"),
-//                                               Side::White));
-//     pieces.push_back(std::make_shared<Knight>(Notation::fromChessNotation("G1"),
-//                                               Side::White));
-//     pieces.push_back(std::make_shared<Knight>(Notation::fromChessNotation("B8"),
-//                                               Side::Black));
-//     pieces.push_back(std::make_shared<Knight>(Notation::fromChessNotation("G8"),
-//                                               Side::Black));
-//
-//     // =============== Bishops ===============
-//     pieces.push_back(std::make_shared<Bishop>(Notation::fromChessNotation("C1"),
-//                                               Side::White));
-//     pieces.push_back(std::make_shared<Bishop>(Notation::fromChessNotation("F1"),
-//                                               Side::White));
-//     pieces.push_back(std::make_shared<Bishop>(Notation::fromChessNotation("C8"),
-//                                               Side::Black));
-//     pieces.push_back(std::make_shared<Bishop>(Notation::fromChessNotation("F8"),
-//                                               Side::Black));
-//
-//     // =============== Queens =================
-//     pieces.push_back(std::make_shared<Queen>(Notation::fromChessNotation("D1"),
-//                                              Side::White));
-//     pieces.push_back(std::make_shared<Queen>(Notation::fromChessNotation("D8"),
-//                                              Side::Black));
-//
-//     // =============== Kings ==================
-//     pieces.push_back(
-//         std::make_shared<King>(Notation::fromChessNotation("E1"),
-//         Side::White));
-//     pieces.push_back(
-//         std::make_shared<King>(Notation::fromChessNotation("E8"),
-//         Side::Black));
-// }
 
 void Board::createPieces()
 {
@@ -309,29 +281,12 @@ sf::Vector2i Board::getCellFromMousePos(const sf::Vector2i &mousePos,
 {
     sf::Vector2f localMousePos = window.mapPixelToCoords(mousePos, view);
 
-    return {static_cast<int>(localMousePos.x / CELL_SIZE),
-            static_cast<int>(localMousePos.y / CELL_SIZE)};
+    return sf::Vector2i(localMousePos.x / CELL_SIZE,
+                        localMousePos.y / CELL_SIZE);
 }
 
-void Board::resetHoveredCell() { hoveredCell = std::nullopt; };
-
-void Board::highlightMove(Move &move)
+void Board::printSelf() const
 {
-    resetMoveHighlighting();
-    highlightedMoveCells = {move.from, move.to};
-}
-
-void Board::resetMoveHighlighting() { highlightedMoveCells = std::nullopt; }
-
-void Board::setSelectedCell(sf::Vector2i cellPosition)
-{
-    selectedCell = cellPosition;
-}
-void Board::resetSelectedCell() { selectedCell = std::nullopt; }
-
-void Board::dumpSelf()
-{
-    std::cout << id << "\n";
     for(int col = 0; col < GRID_SIZE; col++)
     {
         for(int row = 0; row < GRID_SIZE; row++)
@@ -341,7 +296,7 @@ void Board::dumpSelf()
             {
                 std::cout << (maybePiece->getKind() == PieceKind::Knight
                                   ? 'n'
-                                  : maybePiece->pieceKindToString()[0]);
+                                  : maybePiece->getStringifiedKind()[0]);
             }
             else
             {
@@ -354,3 +309,20 @@ void Board::dumpSelf()
 
     std::cout << "\n";
 }
+
+void Board::setSelectedCell(const sf::Vector2i &cellPosition)
+{
+    selectedCell = cellPosition;
+}
+void Board::setHoveredCell(const sf::Vector2i &cellPosition)
+{
+    hoveredCell = cellPosition;
+}
+void Board::setLastMoveCells(const Move &move)
+{
+    lastMoveCells = std::make_pair(move.from, move.to);
+}
+
+void Board::resetSelectedCell() { selectedCell = std::nullopt; }
+void Board::resetHoveredCell() { hoveredCell = std::nullopt; }
+void Board::resetLastMoveCells() { lastMoveCells = std::nullopt; }
