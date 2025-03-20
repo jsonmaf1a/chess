@@ -14,9 +14,9 @@ class Transition
         : duration(duration)
     {}
 
-    virtual void update(float dt)
+    virtual void update(float deltaTime)
     {
-        elapsedTime += dt;
+        elapsedTime += deltaTime;
         if(elapsedTime >= duration)
         {
             _isFinished = true;

@@ -31,7 +31,7 @@ class Game : public EventHandler
     bool isCheckmate();
     bool isStalemate();
     bool isPawnPromotion();
-    void handlePieceSelection(const sf::Vector2i &cellPosition,
+    void handlePieceSelection(const sf::Vector2i cellPosition,
                               const std::shared_ptr<Piece> maybePiece);
     virtual EventResult handleEvent(const EventContext &eventCtx) override;
 

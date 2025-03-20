@@ -45,14 +45,13 @@ EventResult Game::handleEvent(const EventContext &eventCtx)
     return EventResult::Ignored;
 }
 
-void Game::handlePieceSelection(const sf::Vector2i &cellPosition,
+void Game::handlePieceSelection(const sf::Vector2i cellPosition,
                                 const std::shared_ptr<Piece> piece)
 {
     selectedPiece = *piece;
     board->setSelectedCell(cellPosition);
 
-    auto legalMoves =
-        selectedPiece->get().getLegalMoves(board->getPiecesOnBoard());
+    auto legalMoves = selectedPiece->get().getLegalMoves();
     board->setPossibleMoves(legalMoves);
 
     printGameState();
@@ -60,7 +59,7 @@ void Game::handlePieceSelection(const sf::Vector2i &cellPosition,
 
 void Game::move(Piece &piece, sf::Vector2i newPosition)
 {
-    if(!piece.isLegalMove(board->getPiecesOnBoard(), newPosition))
+    if(!piece.isLegalMove(newPosition))
     {
         selectedPiece = std::nullopt;
         board->resetSelectedCell();

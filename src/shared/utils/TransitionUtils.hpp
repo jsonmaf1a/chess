@@ -7,28 +7,34 @@
 namespace TransitionUtils
 {
 
-    template <typename T> static constexpr T lerp(T a, T b, float t)
-    {
-        return a + (b - a) * t;
-    }
-
     static constexpr float smoothstep(float t)
     {
         return t * t * (3.f - 2.f * t);
     }
 
-    static constexpr sf::Vector2f smoothLerp(sf::Vector2f a, sf::Vector2f b,
-                                             float t)
+    template <typename T>
+        requires std::is_arithmetic_v<T>
+    static constexpr sf::Vector2<T> lerp(sf::Vector2<T> a, sf::Vector2<T> b,
+                                         float t)
+    {
+        return a + (b - a) * t;
+    }
+
+    template <typename T>
+        requires std::is_arithmetic_v<T>
+    static constexpr sf::Vector2<T> smoothLerp(sf::Vector2<T> a,
+                                               sf::Vector2<T> b, float t)
     {
         t = smoothstep(t);
         return lerp(a, b, t);
     }
 
-    static constexpr sf::Vector2f expLerp(sf::Vector2f a, sf::Vector2f b,
-                                          float t, float k = 10.0f)
+    template <typename T>
+        requires std::is_arithmetic_v<T>
+    static constexpr sf::Vector2<T> expLerp(sf::Vector2<T> a, sf::Vector2<T> b,
+                                            float t, float k = 10.f)
     {
-        t = (1.0f - std::exp(-k * t));
+        t = (1.f - std::exp(-k * t));
         return lerp(a, b, t);
     }
-
 } // namespace TransitionUtils

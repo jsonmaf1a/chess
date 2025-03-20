@@ -1,31 +1,32 @@
 #include "Pawn.hpp"
+#include "../shared/config/Board.hpp"
 
-// TODO:
-// * Capturing diagonally
-// * En passant
-// * Blocking by other pieces
-// * Pawn promotion
-std::vector<sf::Vector2i> Pawn::getLegalMoves(
-    std::vector<std::shared_ptr<Piece>> onBoard) const
+std::vector<sf::Vector2i> Pawn::getLegalMoves() const
 {
     std::vector<sf::Vector2i> moves;
 
     int direction = (side == Side::White) ? -1 : 1;
 
-    sf::Vector2i position(currentPosition);
-
     int newY = currentPosition.y + direction;
-    if(newY >= 0 && newY < 8)
+    if(newY >= 0 && newY < BoardConfig::GridSize)
     {
-        moves.push_back({position.x, newY});
+        moves.push_back({currentPosition.x, newY});
+
+        int newX = currentPosition.x + 1;
+        if(newX < BoardConfig::GridSize)
+            moves.push_back({newX, newY});
+
+        newX = currentPosition.x - 1;
+        if(newX >= 0)
+            moves.push_back({newX, newY});
     }
 
     if(!wasMoved)
     {
         int newY = currentPosition.y + 2 * direction;
-        if(newY >= 0 && newY < 8)
+        if(newY >= 0 && newY < BoardConfig::GridSize)
         {
-            moves.push_back({position.x, newY});
+            moves.push_back({currentPosition.x, newY});
         }
     }
 

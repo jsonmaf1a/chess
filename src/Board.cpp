@@ -7,6 +7,7 @@
 #include "pieces/Queen.hpp"
 #include "pieces/Rook.hpp"
 #include "shared/Notation.hpp"
+#include "shared/VertexShapes.hpp"
 #include "shared/utils/PositionUtils.hpp"
 #include <iostream>
 
@@ -30,9 +31,9 @@ void Board::drawSelf(sf::RenderWindow &window)
 {
     window.setView(view.value());
 
-    for(int row = 0; row < GRID_SIZE; row++)
+    for(int row = 0; row < BoardConfig::GridSize; row++)
     {
-        for(int col = 0; col < GRID_SIZE; col++)
+        for(int col = 0; col < BoardConfig::GridSize; col++)
         {
             drawCell(window, {col, row});
         }
@@ -53,58 +54,73 @@ void Board::drawCell(sf::RenderWindow &window, sf::Vector2i position,
     if(color == sf::Color::Transparent)
         color = getCellColor(position.x + position.y);
 
-    sf::RectangleShape rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-    rect.setPosition({position.x * CELL_SIZE, position.y * CELL_SIZE});
+    sf::RectangleShape rect(
+        sf::Vector2f(BoardConfig::CellSize, BoardConfig::CellSize));
+    rect.setPosition({position.x * BoardConfig::CellSize,
+                      position.y * BoardConfig::CellSize});
     rect.setFillColor(color);
 
     window.draw(rect);
 }
 
 void Board::drawPossibleMove(sf::RenderWindow &window,
-                             const sf::Vector2i &position)
+                             const sf::Vector2i position)
 {
-    constexpr float radius = 15.f;
+    const int alpha = 30;
+    sf::Color color = sf::Color(0, 0, 0, alpha);
 
-    sf::CircleShape circle(radius);
-    circle.setPosition(
-        {position.x * Board::CELL_SIZE + Board::CELL_SIZE / 2.f - radius,
-         position.y * Board::CELL_SIZE + Board::CELL_SIZE / 2.f - radius});
-
-    sf::Color color = sf::Color::Black;
-    color.a = 30;
-    circle.setFillColor(color);
-
-    window.draw(circle);
+    if(!getPiece(position))
+    {
+        const float radius = 15.f;
+        sf::CircleShape circle(radius);
+        circle.setFillColor(color);
+        circle.setPosition({position.x * BoardConfig::CellSize +
+                                BoardConfig::CellSize / 2.f - radius,
+                            position.y * BoardConfig::CellSize +
+                                BoardConfig::CellSize / 2.f - radius});
+        window.draw(circle);
+    }
+    else
+    {
+        const int offset = 5.f;
+        const float outer = BoardConfig::CellSize / 2.f - offset;
+        const float inner = outer - 10.f;
+        VertexShapes::Ring ring(inner, outer);
+        ring.setFillColor(color);
+        ring.setPosition(
+            {position.x * BoardConfig::CellSize + BoardConfig::CellSize / 2.f,
+             position.y * BoardConfig::CellSize + BoardConfig::CellSize / 2.f});
+        window.draw(ring);
+    }
 }
 
 void Board::drawHighlights(sf::RenderWindow &window)
 {
-    constexpr int HIGHLIGHT_OPACITY = 60;
-
-    auto createHighlightColor = [](sf::Color color,
-                                   int alpha = HIGHLIGHT_OPACITY) {
-        color.a = alpha;
-        return color;
-    };
+    const int defaultAlpha = 60;
 
     if(hoveredCell)
     {
         sf::Color color = sf::Color::Black;
+        color.a = 10;
 
-        drawCell(window, hoveredCell.value(), createHighlightColor(color, 10));
+        drawCell(window, hoveredCell.value(), color);
     }
 
     if(selectedCell)
     {
-        drawCell(window, selectedCell.value(),
-                 createHighlightColor(sf::Color::Yellow));
+        sf::Color color = sf::Color::Yellow;
+        color.a = defaultAlpha;
+
+        drawCell(window, selectedCell.value(), color);
     }
 
     if(lastMoveCells)
     {
-        sf::Color highlightColor = createHighlightColor(sf::Color::Yellow);
-        drawCell(window, lastMoveCells.value().first, highlightColor);
-        drawCell(window, lastMoveCells.value().second, highlightColor);
+        sf::Color color = sf::Color::Yellow;
+        color.a = defaultAlpha;
+
+        drawCell(window, lastMoveCells.value().first, color);
+        drawCell(window, lastMoveCells.value().second, color);
     }
 }
 
@@ -113,14 +129,16 @@ void Board::drawLabels(sf::RenderWindow &window)
     const sf::Font &font = FontManager::getFont(FontStyle::Semibold);
     const int fontSize = 12;
 
-    for(int i = 0; i < GRID_SIZE; i++)
+    for(int i = 0; i < BoardConfig::GridSize; i++)
     {
-        sf::Vector2f filePos((i + 1) * CELL_SIZE - 14,
-                             GRID_SIZE * CELL_SIZE - 20);
-        sf::Vector2f rankPos(4, (GRID_SIZE - 1 - i) * CELL_SIZE + 2);
+        sf::Vector2f filePos((i + 1) * BoardConfig::CellSize - 14,
+                             BoardConfig::GridSize * BoardConfig::CellSize -
+                                 20);
+        sf::Vector2f rankPos(
+            4, (BoardConfig::GridSize - 1 - i) * BoardConfig::CellSize + 2);
 
-        bool isFileOnDark = ((GRID_SIZE - 1) + i) % 2 != 0;
-        bool isRankOnDark = ((GRID_SIZE - 1 - i) % 2 != 0);
+        bool isFileOnDark = ((BoardConfig::GridSize - 1) + i) % 2 != 0;
+        bool isRankOnDark = ((BoardConfig::GridSize - 1 - i) % 2 != 0);
 
         sf::Color fileTextColor = isFileOnDark ? colorLight : colorDark;
         sf::Color rankTextColor = isRankOnDark ? colorLight : colorDark;
@@ -183,9 +201,9 @@ std::vector<std::shared_ptr<Piece>> Board::getPiecesOnBoard()
 {
     std::vector<std::shared_ptr<Piece>> filtered;
 
-    for(int i = 0; i < GRID_SIZE; ++i)
+    for(int i = 0; i < BoardConfig::GridSize; ++i)
     {
-        for(int j = 0; j < GRID_SIZE; ++j)
+        for(int j = 0; j < BoardConfig::GridSize; ++j)
         {
             auto &piece = _board[i][j];
             if(piece != nullptr)
@@ -198,7 +216,7 @@ std::vector<std::shared_ptr<Piece>> Board::getPiecesOnBoard()
     return filtered;
 }
 
-void Board::updatePiecePosition(Piece &piece, sf::Vector2i &newPosition)
+void Board::updatePiecePosition(Piece &piece, sf::Vector2i newPosition)
 {
     sf::Vector2i piecePosition = sf::Vector2i{piece.getPosition()};
 
@@ -206,7 +224,7 @@ void Board::updatePiecePosition(Piece &piece, sf::Vector2i &newPosition)
     _board[piecePosition.x][piecePosition.y] = nullptr;
     _board[newPosition.x][newPosition.y] = std::move(_piece);
 
-    piece.updatePositionWithTransition(sf::Vector2f{newPosition});
+    piece.updatePositionWithTransition(newPosition);
 }
 
 template <typename T>
@@ -267,10 +285,11 @@ sf::Color Board::getCellColor(int cellPosition) const
 
 bool Board::isMouseOverCell(sf::Vector2i mousePos)
 {
-    int col = mousePos.x / CELL_SIZE;
-    int row = mousePos.y / CELL_SIZE;
+    int col = mousePos.x / BoardConfig::CellSize;
+    int row = mousePos.y / BoardConfig::CellSize;
 
-    return row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE;
+    return row >= 0 && row < BoardConfig::GridSize && col >= 0 &&
+           col < BoardConfig::GridSize;
 }
 
 std::shared_ptr<Piece> Board::getPiece(sf::Vector2i cellPosition) const
@@ -280,21 +299,21 @@ std::shared_ptr<Piece> Board::getPiece(sf::Vector2i cellPosition) const
 
 const sf::View &Board::getView() const { return view.value(); }
 
-sf::Vector2i Board::getCellFromMousePos(const sf::Vector2i &mousePos,
+sf::Vector2i Board::getCellFromMousePos(const sf::Vector2i mousePos,
                                         const sf::RenderWindow &window,
                                         const sf::View &view) const
 {
     sf::Vector2f localMousePos = window.mapPixelToCoords(mousePos, view);
 
-    return sf::Vector2i(localMousePos.x / CELL_SIZE,
-                        localMousePos.y / CELL_SIZE);
+    return sf::Vector2i(localMousePos.x / BoardConfig::CellSize,
+                        localMousePos.y / BoardConfig::CellSize);
 }
 
 void Board::printSelf() const
 {
-    for(int col = 0; col < GRID_SIZE; col++)
+    for(int col = 0; col < BoardConfig::GridSize; col++)
     {
-        for(int row = 0; row < GRID_SIZE; row++)
+        for(int row = 0; row < BoardConfig::GridSize; row++)
         {
             auto maybePiece = _board[row][col];
             if(maybePiece)
@@ -315,20 +334,20 @@ void Board::printSelf() const
     std::cout << "\n";
 }
 
-void Board::setSelectedCell(const sf::Vector2i &cellPosition)
+void Board::setSelectedCell(const sf::Vector2i cellPosition)
 {
     selectedCell = cellPosition;
 }
-void Board::setHoveredCell(const sf::Vector2i &cellPosition)
+void Board::setHoveredCell(const sf::Vector2i cellPosition)
 {
     hoveredCell = cellPosition;
 }
-void Board::setLastMoveCells(const Move &move)
+void Board::setLastMoveCells(const Move move)
 {
     lastMoveCells = std::make_pair(move.from, move.to);
 }
 
-void Board::setPossibleMoves(const std::vector<sf::Vector2i> &possibleMoves)
+void Board::setPossibleMoves(const std::vector<sf::Vector2i> possibleMoves)
 {
 
     this->possibleMoves = possibleMoves;

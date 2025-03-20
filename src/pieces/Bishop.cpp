@@ -1,36 +1,35 @@
 #include "Bishop.hpp"
+#include "../shared/config/Board.hpp"
 #include <cmath>
 
-// TODO:
-// * Blocking by other pieces
-std::vector<sf::Vector2i> Bishop::getLegalMoves(
-    std::vector<std::shared_ptr<Piece>> onBoard) const
+std::vector<sf::Vector2i> Bishop::getLegalMoves() const
 {
     std::vector<sf::Vector2i> moves;
 
-    // Top-left (diagonal up-left)
-    for(int i = 1; currentPosition.x - i >= 0 && currentPosition.y - i >= 0;
-        i++)
-    {
-        moves.push_back({currentPosition.x - i, currentPosition.y - i});
-    }
+    const std::vector<sf::Vector2i> directions = {
+        {-1, -1}, // Top-left (diagonal up-left)
+        {1, -1},  // Top-right (diagonal up-right)
+        {-1, 1},  // Bottom-left (diagonal down-left)
+        {1, 1}    // Bottom-right (diagonal down-right)
+    };
 
-    // Top-right (diagonal up-right)
-    for(int i = 1; currentPosition.x + i < 8 && currentPosition.y - i >= 0; i++)
+    for(const auto &dir : directions)
     {
-        moves.push_back({currentPosition.x + i, currentPosition.y - i});
-    }
+        int i = 1;
+        while(true)
+        {
+            sf::Vector2i newPosition = {currentPosition.x + dir.x * i,
+                                        currentPosition.y + dir.y * i};
 
-    // Bottom-left (diagonal down-left)
-    for(int i = 1; currentPosition.x - i >= 0 && currentPosition.y + i < 8; i++)
-    {
-        moves.push_back({currentPosition.x - i, currentPosition.y + i});
-    }
+            if(newPosition.x < 0 || newPosition.x >= BoardConfig::GridSize ||
+               newPosition.y < 0 || newPosition.y >= BoardConfig::GridSize)
+            {
+                break;
+            }
 
-    // Bottom-right (diagonal down-right)
-    for(int i = 1; currentPosition.x + i < 8 && currentPosition.y + i < 8; i++)
-    {
-        moves.push_back({currentPosition.x + i, currentPosition.y + i});
+            moves.push_back(newPosition);
+            i++;
+        }
     }
 
     return moves;

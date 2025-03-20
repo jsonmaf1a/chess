@@ -1,37 +1,34 @@
 #include "Rook.hpp"
+#include "../shared/config/Board.hpp"
 
-// TODO:
-// * Blocking by other pieces
-// * Castle
-std::vector<sf::Vector2i> Rook::getLegalMoves(
-    std::vector<std::shared_ptr<Piece>> onBoard) const
+std::vector<sf::Vector2i> Rook::getLegalMoves() const
 {
     std::vector<sf::Vector2i> moves;
 
-    sf::Vector2i position(currentPosition);
+    const std::vector<sf::Vector2i> directions = {
+        {0, -1}, // Up
+        {0, 1},  // Down
+        {-1, 0}, // Left
+        {1, 0},  // Right
+    };
 
-    // Up
-    for(int i = 1; currentPosition.y - i >= 0; i++)
+    for(const auto &dir : directions)
     {
-        moves.push_back({position.x, position.y - i});
-    }
+        int i = 1;
+        while(true)
+        {
+            sf::Vector2i newPosition = {currentPosition.x + dir.x * i,
+                                        currentPosition.y + dir.y * i};
 
-    // Down
-    for(int i = 1; currentPosition.y + i < 8; i++)
-    {
-        moves.push_back({position.x, position.y + i});
-    }
+            if(newPosition.x < 0 || newPosition.x >= BoardConfig::GridSize ||
+               newPosition.y < 0 || newPosition.y >= BoardConfig::GridSize)
+            {
+                break;
+            }
 
-    // Left
-    for(int i = 1; currentPosition.x - i >= 0; i++)
-    {
-        moves.push_back({position.x - i, position.y});
-    }
-
-    // Right
-    for(int i = 1; currentPosition.x + i < 8; i++)
-    {
-        moves.push_back({position.x + i, position.y});
+            moves.push_back(newPosition);
+            i++;
+        }
     }
 
     return moves;

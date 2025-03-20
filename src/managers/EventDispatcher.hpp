@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../shared/EventContext.hpp"
 #include "../shared/EventHandler.hpp"
 #include <memory>
 #include <vector>

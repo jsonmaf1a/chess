@@ -1,10 +1,9 @@
 #include "Piece.hpp"
-#include "Board.hpp"
 #include "managers/TextureManager.hpp"
 #include "managers/TransitionManager.hpp"
 #include "shared/Notation.hpp"
 #include "shared/PropertyTransition.hpp"
-
+#include "shared/config/Board.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <iostream>
 #include <math.h>
@@ -21,7 +20,7 @@ Piece::Piece(PieceKind kind, Side side, sf::Vector2i position)
     sprite.setScale({SPRITE_SCALE, SPRITE_SCALE});
 
     sf::FloatRect spriteBounds = sprite.getLocalBounds();
-    sprite.setOrigin({spriteBounds.size.x / 2.0f, spriteBounds.size.y / 2.0f});
+    sprite.setOrigin({spriteBounds.size.x / 2.f, spriteBounds.size.y / 2.f});
 
     setPosition(position);
 }
@@ -31,37 +30,39 @@ void Piece::drawSelf(sf::RenderWindow &window) { window.draw(sprite); };
 void Piece::setPosition(sf::Vector2i position)
 {
     this->currentPosition = position;
-    sprite.setPosition(
-        normalizeSpritePosition(static_cast<sf::Vector2f>(position)));
+    sprite.setPosition(normalizeSpritePosition(position));
 }
 
-void Piece::updatePositionWithTransition(sf::Vector2f position)
+void Piece::updatePositionWithTransition(sf::Vector2i position)
 {
+    float transitioDuration = 0.5f;
     auto positionTransition =
         std::make_shared<PropertyTransition<sf::Vector2f>>(
-            static_cast<sf::Vector2f>(currentPosition), position, 0.5f,
-            [&](sf::Vector2f newPosition) {
+            static_cast<sf::Vector2f>(currentPosition),
+            static_cast<sf::Vector2f>(position), transitioDuration,
+            [this](sf::Vector2f newPosition) {
                 sprite.setPosition(normalizeSpritePosition(newPosition));
             });
     TransitionManager::addTransition(positionTransition);
 
-    this->currentPosition = static_cast<sf::Vector2i>(position);
+    this->currentPosition = position;
 }
 
-sf::Vector2f Piece::normalizeSpritePosition(sf::Vector2f position) const
+template <typename T>
+    requires std::is_arithmetic_v<T>
+sf::Vector2f Piece::normalizeSpritePosition(sf::Vector2<T> position) const
 {
-    float posX =
-        std::round(position.x * Board::CELL_SIZE + Board::CELL_SIZE / 2.0f);
-    float posY =
-        std::round(position.y * Board::CELL_SIZE + Board::CELL_SIZE / 2.0f);
+    float posX = std::round(position.x * BoardConfig::CellSize +
+                            BoardConfig::CellSize / 2.0f);
+    float posY = std::round(position.y * BoardConfig::CellSize +
+                            BoardConfig::CellSize / 2.0f);
 
     return {posX, posY};
 }
 
-bool Piece::isLegalMove(std::vector<std::shared_ptr<Piece>> onBoard,
-                        sf::Vector2i newPosition) const
+bool Piece::isLegalMove(sf::Vector2i newPosition) const
 {
-    auto moves = getLegalMoves(onBoard);
+    auto moves = getLegalMoves();
     auto it = std::find(moves.begin(), moves.end(), newPosition);
 
     return it != moves.end();
@@ -106,14 +107,14 @@ Side Piece::getSide() const { return side; }
 
 PieceKind Piece::getKind() const { return kind; }
 
-void Piece::printLegalMoves(std::vector<std::shared_ptr<Piece>> onBoard) const
+void Piece::printLegalMoves() const
 {
     std::cout << "\n"
               << "Current legal moves for ";
     printSelf();
     std::cout << ":";
 
-    auto moves = getLegalMoves(onBoard);
+    auto moves = getLegalMoves();
 
     for(auto move : moves)
     {

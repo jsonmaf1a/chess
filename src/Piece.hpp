@@ -31,14 +31,15 @@ class Piece : public UIComponent
 
     virtual void drawSelf(sf::RenderWindow &window) override;
 
-    virtual std::vector<sf::Vector2i> getLegalMoves(
-        std::vector<std::shared_ptr<Piece>> onBoard) const = 0;
-    bool isLegalMove(std::vector<std::shared_ptr<Piece>> onBoard,
-                     sf::Vector2i newPosition) const;
+    virtual std::vector<sf::Vector2i> getLegalMoves() const = 0;
+    bool isLegalMove(sf::Vector2i newPosition) const;
     void setPosition(sf::Vector2i position);
-    void updatePositionWithTransition(sf::Vector2f position);
+    void updatePositionWithTransition(sf::Vector2i position);
     sf::Vector2i getPosition() const;
-    sf::Vector2f normalizeSpritePosition(sf::Vector2f position) const;
+
+    template <typename T>
+        requires std::is_arithmetic_v<T>
+    sf::Vector2f normalizeSpritePosition(sf::Vector2<T> position) const;
 
     Side getSide() const;
     PieceKind getKind() const;
@@ -46,6 +47,6 @@ class Piece : public UIComponent
     static std::string_view pieceKindToString(PieceKind kind);
     std::string_view getStringifiedKind() const;
 
-    void printLegalMoves(std::vector<std::shared_ptr<Piece>> onBoard) const;
+    void printLegalMoves() const;
     void printSelf() const;
 };

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "EventContext.hpp"
-#include "EventResult.hpp"
+#include "Events.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 

@@ -3,19 +3,12 @@
 #include "Piece.hpp"
 #include "shared/Move.hpp"
 #include "shared/UIComponent.hpp"
+#include "shared/config/Board.hpp"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
-
-struct Vector2fHash
-{
-    std::size_t operator()(const sf::Vector2f &v) const
-    {
-        return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
-    }
-};
 
 class Board : public UIComponent
 {
@@ -31,17 +24,14 @@ class Board : public UIComponent
     }
     ~Board() = default;
 
-    static constexpr int GRID_SIZE = 8;
-    static constexpr float CELL_SIZE = 100.f;
-
     virtual void drawSelf(sf::RenderWindow &window) override;
     void drawPossibleMove(sf::RenderWindow &window,
-                          const sf::Vector2i &position);
+                          const sf::Vector2i position);
     void drawHighlights(sf::RenderWindow &window);
     void drawCell(sf::RenderWindow &window, sf::Vector2i position,
                   sf::Color color = sf::Color::Transparent);
 
-    sf::Vector2i getCellFromMousePos(const sf::Vector2i &mousePos,
+    sf::Vector2i getCellFromMousePos(const sf::Vector2i mousePos,
                                      const sf::RenderWindow &window,
                                      const sf::View &view) const;
 
@@ -49,14 +39,14 @@ class Board : public UIComponent
 
     void initializePieces();
     void createPieces();
-    void updatePiecePosition(Piece &piece, sf::Vector2i &newPosition);
+    void updatePiecePosition(Piece &piece, sf::Vector2i newPosition);
     std::shared_ptr<Piece> getPiece(sf::Vector2i cellPosition) const;
     std::vector<std::shared_ptr<Piece>> getPiecesOnBoard();
 
-    void setSelectedCell(const sf::Vector2i &cellPosition);
-    void setHoveredCell(const sf::Vector2i &cellPosition);
-    void setLastMoveCells(const Move &move);
-    void setPossibleMoves(const std::vector<sf::Vector2i> &possibleMoves);
+    void setSelectedCell(const sf::Vector2i cellPosition);
+    void setHoveredCell(const sf::Vector2i cellPosition);
+    void setLastMoveCells(const Move move);
+    void setPossibleMoves(const std::vector<sf::Vector2i> possibleMoves);
 
     void resetSelectedCell();
     void resetHoveredCell();
@@ -67,7 +57,8 @@ class Board : public UIComponent
     void printSelf() const;
 
   private:
-    std::shared_ptr<Piece> _board[GRID_SIZE][GRID_SIZE] = {nullptr};
+    std::shared_ptr<Piece> _board[BoardConfig::GridSize]
+                                 [BoardConfig::GridSize] = {nullptr};
 
     std::optional<std::pair<sf::Vector2i, sf::Vector2i>> lastMoveCells =
         std::nullopt;
