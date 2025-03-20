@@ -5,16 +5,31 @@
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <iostream>
 
-void preloadAssets()
+int preloadAssets()
 {
-    FontManager::loadFonts();
-    SoundManager::loadSounds();
+    try
+    {
+        FontManager::loadFonts();
+        SoundManager::loadSounds();
+    }
+    catch(const std::exception &e)
+    {
+        std::cerr << "Error during asset preloading: " << e.what() << std::endl;
+        return -1;
+    }
+
+    return 0;
 }
 
 int main()
 {
-    preloadAssets();
+    if(preloadAssets() != 0)
+    {
+        std::cerr << "Asset loading failed. Exiting program." << std::endl;
+        return -1;
+    }
 
     Window window;
 

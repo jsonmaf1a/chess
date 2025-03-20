@@ -11,6 +11,7 @@ namespace FontManager
     void loadFonts()
     {
         const std::string BASE_PATH = "assets/fonts/static/";
+
         std::unordered_map<FontStyle, std::string> fontPaths = {
             {FontStyle::Regular, "Roboto-Regular.ttf"},
             {FontStyle::Light, "Roboto-Light.ttf"},

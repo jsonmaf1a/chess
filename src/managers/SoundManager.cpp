@@ -13,6 +13,7 @@ namespace SoundManager
     void loadSounds()
     {
         const std::string BASE_PATH = "assets/audio/";
+
         std::unordered_map<SoundKind, std::string> soundPaths = {
             {SoundKind::Capture, "capture.mp3"},
             {SoundKind::Castle, "castle.mp3"},
