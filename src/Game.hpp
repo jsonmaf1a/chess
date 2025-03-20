@@ -18,22 +18,24 @@ class Game : public EventHandler
     Game(sf::RenderWindow &window, UIManager &ui)
         : window(window)
         , ui(ui)
-        , board(std::make_shared<Board>(window, Layout::BoardBounds,
-                                        Layout::BoardViewport))
+        , board(std::make_shared<Board>(window, LayoutConfig::BoardBounds,
+                                        LayoutConfig::BoardViewport))
     {
         ui.addComponent(board);
     }
     ~Game() = default;
+
+    virtual EventResult handleEvent(const EventContext &eventCtx) override;
 
     void start();
     void move(Piece &piece, sf::Vector2i newPosition);
     void nextTurn();
     bool isCheckmate();
     bool isStalemate();
-    bool isPawnPromotion();
+    bool isPromotion();
+    bool isCastling();
     void handlePieceSelection(const sf::Vector2i cellPosition,
                               const std::shared_ptr<Piece> maybePiece);
-    virtual EventResult handleEvent(const EventContext &eventCtx) override;
 
     void printGameState();
 
@@ -45,4 +47,5 @@ class Game : public EventHandler
     std::optional<std::reference_wrapper<Piece>> selectedPiece;
 
     Side currentSide = Side::White;
+    bool isStarted = false;
 };

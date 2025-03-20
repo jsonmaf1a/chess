@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics/Rect.hpp>
 
-namespace Layout
+namespace LayoutConfig
 {
     static constexpr sf::Vector2u WindowBounds{1200, 800};
     static constexpr sf::Vector2f WindowViewport{1.f, 1.f};
@@ -19,4 +19,4 @@ namespace Layout
     static constexpr sf::FloatRect BoardViewport{
         {WindowViewport.x / 3.f, 0.f},
         {WindowViewport.x - WindowViewport.x / 3.f, WindowViewport.y}};
-} // namespace Layout
+} // namespace LayoutConfig

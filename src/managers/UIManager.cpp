@@ -5,8 +5,8 @@
 
 void UIManager::init(sf::RenderWindow &window)
 {
-    addComponent(std::make_shared<Sidebar>(window, Layout::SidebarBounds,
-                                           Layout::SidebarViewport));
+    addComponent(std::make_shared<Sidebar>(window, LayoutConfig::SidebarBounds,
+                                           LayoutConfig::SidebarViewport));
 }
 
 void UIManager::addComponent(std::shared_ptr<UIComponent> component)

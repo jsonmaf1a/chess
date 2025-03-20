@@ -4,8 +4,13 @@
 #include "shared/utils/PositionUtils.hpp"
 #include <iostream>
 
+void Game::start() { isStarted = true; }
+
 EventResult Game::handleEvent(const EventContext &eventCtx)
 {
+    if(!isStarted)
+        return EventResult::Ignored;
+
     if(EventUtils::isLeftClickEvent(eventCtx.event))
     {
         auto mouseClickEvent =
@@ -27,19 +32,19 @@ EventResult Game::handleEvent(const EventContext &eventCtx)
         if(maybePiece && maybePiece->getSide() == currentSide)
         {
             handlePieceSelection(cellPosition, maybePiece);
-            return EventResult::Consumed;
+            return EventResult::Handled;
         }
 
         if(selectedPiece.has_value())
         {
             move(selectedPiece->get(), cellPosition);
-            return EventResult::Consumed;
+            return EventResult::Handled;
         }
 
         std::cout << "nothing\n";
         selectedPiece = std::nullopt;
         printGameState();
-        return EventResult::Consumed;
+        return EventResult::Handled;
     }
 
     return EventResult::Ignored;

@@ -7,7 +7,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <iostream>
 
-int preloadAssets()
+int main()
 {
     try
     {
@@ -16,18 +16,9 @@ int preloadAssets()
     }
     catch(const std::exception &e)
     {
-        std::cerr << "Error during asset preloading: " << e.what() << std::endl;
-        return -1;
-    }
+        std::cerr << "Error during asset preloading: " << e.what() << "\n";
+        std::cerr << "Exiting game.\n";
 
-    return 0;
-}
-
-int main()
-{
-    if(preloadAssets() != 0)
-    {
-        std::cerr << "Asset loading failed. Exiting program." << std::endl;
         return -1;
     }
 
@@ -37,11 +28,12 @@ int main()
         std::make_shared<Game>(window.getRenderWindow(), window.getUI());
     window.getEventDispatcher().registerListener(game);
 
+    game->start();
+
     while(window.isOpen())
     {
         window.pollEvents();
         window.update();
-        // game.update()
     }
 
     return 0;

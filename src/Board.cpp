@@ -182,7 +182,7 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
         if(isMouseOverCell(cellPosition))
         {
             if(hoveredCell == cellPosition)
-                return EventResult::Consumed;
+                return EventResult::Handled;
 
             cursorManager.setHandCursor();
             setHoveredCell(cellPosition);
@@ -190,7 +190,7 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
             std::cout << "Hovered cell: "
                       << Notation::toChessNotation(cellPosition) << "\n";
 
-            return EventResult::Consumed;
+            return EventResult::Handled;
         }
     }
 
@@ -244,36 +244,30 @@ void Board::createPieces()
     static constexpr std::string WHITE_PAWNS_ROW = "2";
     static constexpr std::string BLACK_PAWNS_ROW = "7";
 
-    // =============== Pawns =================
     for(char file = 'A'; file <= 'H'; file++)
     {
         placePiece<Pawn>(file + WHITE_PAWNS_ROW, Side::White);
         placePiece<Pawn>(file + BLACK_PAWNS_ROW, Side::Black);
     }
 
-    // =============== Rooks =================
     placePiece<Rook>("A1", Side::White);
     placePiece<Rook>("H1", Side::White);
     placePiece<Rook>("A8", Side::Black);
     placePiece<Rook>("H8", Side::Black);
 
-    // =============== Knights ===============
     placePiece<Knight>("B1", Side::White);
     placePiece<Knight>("G1", Side::White);
     placePiece<Knight>("B8", Side::Black);
     placePiece<Knight>("G8", Side::Black);
 
-    // =============== Bishops ===============
     placePiece<Bishop>("C1", Side::White);
     placePiece<Bishop>("F1", Side::White);
     placePiece<Bishop>("C8", Side::Black);
     placePiece<Bishop>("F8", Side::Black);
 
-    // =============== Queens =================
     placePiece<Queen>("D1", Side::White);
     placePiece<Queen>("D8", Side::Black);
 
-    // =============== Kings ==================
     placePiece<King>("E1", Side::White);
     placePiece<King>("E8", Side::Black);
 }

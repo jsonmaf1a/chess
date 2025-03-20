@@ -29,13 +29,13 @@ class UIComponent : public EventHandler
     virtual void drawSelf(sf::RenderWindow &window) = 0;
 
   public:
-    virtual void draw(sf::RenderWindow &window);
+    void draw(sf::RenderWindow &window);
 
     void setView(sf::View view) { this->view = view; };
     void setView(sf::FloatRect bounds) { view = sf::View(bounds); };
 
     EventResult handleEvent(const EventContext &event) override;
-    virtual EventResult handleSelfEvent(const EventContext &event)
+    virtual EventResult handleSelfEvent(const EventContext &eventCtx)
     {
         return EventResult::Ignored;
     }

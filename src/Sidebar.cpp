@@ -36,7 +36,7 @@ EventResult Sidebar::handleSelfEvent(const EventContext &eventCtx)
             std::cout << "Sidebar mousemove: "
                       << "x: " << mouseMoved->position.x << "\t"
                       << "y: " << mouseMoved->position.y << "\n";
-            return EventResult::Consumed;
+            return EventResult::Handled;
         }
     }
 

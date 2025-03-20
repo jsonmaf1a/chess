@@ -15,8 +15,8 @@ class Window
     static constexpr sf::Color BACKGROUND = {30, 30, 30, 255};
     static constexpr const char *WINDOW_TITLE = "sfml-chess";
 
-    Window(uint width = Layout::WindowBounds.x,
-           uint height = Layout::WindowBounds.y,
+    Window(uint width = LayoutConfig::WindowBounds.x,
+           uint height = LayoutConfig::WindowBounds.y,
            const std::string &title = WINDOW_TITLE);
     ~Window();
 
@@ -35,6 +35,4 @@ class Window
     UIManager ui;
 
     bool isInitialized = false;
-
-    void handleKeyPress(const sf::Event::KeyPressed &event);
 };
