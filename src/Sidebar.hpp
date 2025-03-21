@@ -25,6 +25,7 @@ class Sidebar : public UIComponent
                 std::cout << "click\n";
 
                 state.isStarted = state.isStarted ? false : true;
+                state.initializeClocks();
 
                 return EventResult::Handled;
             },

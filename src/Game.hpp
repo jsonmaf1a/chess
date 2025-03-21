@@ -22,10 +22,10 @@ class Game : public EventHandler
 
     virtual EventResult handleEvent(const EventContext &eventCtx) override;
 
-    void start();
     void update();
     void move(Piece &piece, sf::Vector2i newPosition);
-    void nextTurn();
+    void handleIllegalMove();
+    bool isCheck();
     bool isCheckmate();
     bool isStalemate();
     bool isPromotion();
@@ -35,11 +35,11 @@ class Game : public EventHandler
 
     GameState &getState();
 
-    void printGameState();
-
   private:
     sf::RenderWindow &window;
     UIManager &ui;
     std::shared_ptr<Board> board;
-    GameState state = {50, Side::White, false, GameModePresets::Rapid10};
+    GameState state = {50, Side::White, false,
+                       GameModePresets::createCustomPreset({10 * 1000})};
+    sf::Clock clock;
 };

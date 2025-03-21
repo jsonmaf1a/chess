@@ -85,8 +85,8 @@ template <> constexpr std::string_view StringUtils::stringify(GameMode mode)
 
 struct TimeControl
 {
-    unsigned int secondsRemain;
-    unsigned int incrementPerMove = 0;
+    unsigned int millis;
+    unsigned int incrementMillis = 0;
 };
 
 struct GameModePreset
@@ -99,23 +99,32 @@ namespace GameModePresets
 {
     static const GameModePreset ClassicUnlimited(GameMode::Classic);
     static const GameModePreset Classic60(GameMode::Classic,
-                                          TimeControl{60 * 60});
+                                          TimeControl{60 * 60 * 1000});
 
-    static const GameModePreset Rapid10(GameMode::Rapid, TimeControl{60 * 10});
+    static const GameModePreset Rapid10(GameMode::Rapid,
+                                        TimeControl{60 * 10 * 1000});
     static const GameModePreset Rapid15plus10(GameMode::Rapid,
-                                              TimeControl{60 * 15, 10});
-    static const GameModePreset Rapid30(GameMode::Rapid, TimeControl{60 * 30});
+                                              TimeControl{60 * 15 * 1000,
+                                                          10 * 1000});
+    static const GameModePreset Rapid30(GameMode::Rapid,
+                                        TimeControl{60 * 30 * 1000});
 
-    static const GameModePreset Blitz3(GameMode::Blitz, TimeControl{60 * 3});
+    static const GameModePreset Blitz3(GameMode::Blitz,
+                                       TimeControl{60 * 3 * 1000});
     static const GameModePreset Blitz3plus2(GameMode::Blitz,
-                                            TimeControl{60 * 3, 2});
-    static const GameModePreset Blitz5(GameMode::Blitz, TimeControl{60 * 5});
+                                            TimeControl{60 * 3 * 1000,
+                                                        2 * 1000});
+    static const GameModePreset Blitz5(GameMode::Blitz,
+                                       TimeControl{60 * 5 * 1000});
 
-    static const GameModePreset Bullet1(GameMode::Bullet, TimeControl{60 * 1});
+    static const GameModePreset Bullet1(GameMode::Bullet,
+                                        TimeControl{60 * 1 * 1000});
     static const GameModePreset Bullet1plus1(GameMode::Bullet,
-                                             TimeControl{60 * 1, 1});
+                                             TimeControl{60 * 1 * 1000,
+                                                         1 * 1000});
     static const GameModePreset Bullet2plus1(GameMode::Bullet,
-                                             TimeControl{60 * 2, 1});
+                                             TimeControl{60 * 2 * 1000,
+                                                         1 * 1000});
 
     static constexpr GameModePreset createCustomPreset(TimeControl timeControl)
     {

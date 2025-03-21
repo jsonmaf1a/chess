@@ -1,12 +1,22 @@
+#define DEBUG
+
 #include "Game.hpp"
 #include "managers/SoundManager.hpp"
 #include "shared/utils/EventUtils.hpp"
 #include "shared/utils/PositionUtils.hpp"
 #include <iostream>
 
-void Game::start() { state.isStarted = true; }
+void Game::update()
+{
+    if(!state.isStarted)
+    {
+        clock.restart();
+        return;
+    }
 
-void Game::update() {}
+    unsigned int dt = clock.restart().asMilliseconds();
+    state.decrementTimeForCurrentSide(dt);
+}
 
 EventResult Game::handleEvent(const EventContext &eventCtx)
 {
@@ -45,7 +55,12 @@ EventResult Game::handleEvent(const EventContext &eventCtx)
 
         std::cout << "nothing\n";
         state.selectedPiece = std::nullopt;
-        printGameState();
+
+#ifdef DEBUG
+        board->printSelf();
+        state.print();
+#endif
+
         return EventResult::Handled;
     }
 
@@ -61,53 +76,57 @@ void Game::handlePieceSelection(const sf::Vector2i cellPosition,
     auto legalMoves = state.selectedPiece->get().getLegalMoves();
     board->setPossibleMoves(legalMoves);
 
-    printGameState();
+#ifdef DEBUG
+    board->printSelf();
+    state.print();
+#endif
 }
 
 void Game::move(Piece &piece, sf::Vector2i newPosition)
 {
     if(!piece.isLegalMove(newPosition))
-    {
-        state.selectedPiece = std::nullopt;
-        board->resetSelectedCell();
-        board->resetPossibleMoves();
-        SoundManager::playSound(SoundKind::IllegalMove);
-        return;
-    }
+        return handleIllegalMove();
 
     if(!piece.wasMoved)
         piece.wasMoved = true;
 
+    bool isCapturing = false;
+    std::optional<PieceKind> capturedPieceKind;
+    auto pieceToCapture = board->getPiece(newPosition);
+    if(pieceToCapture)
+    {
+        isCapturing = true;
+        board->removeChild(pieceToCapture);
+        capturedPieceKind = pieceToCapture->getKind();
+    }
+
     state.moves.push_back(std::make_unique<Move>(
-        piece, static_cast<sf::Vector2i>(piece.getPosition()), newPosition));
+        piece, static_cast<sf::Vector2i>(piece.getPosition()), newPosition,
+        capturedPieceKind));
 
     board->setLastMoveCells(*state.moves.back());
     board->updatePiecePosition(piece, newPosition);
-    SoundManager::playSound(SoundKind::MoveSelf);
 
+    SoundManager::playSound(isCapturing ? SoundKind::Capture
+                                        : SoundKind::MoveSelf);
+
+    state.incrementTimeForCurrentSide();
     state.selectedPiece = std::nullopt;
     board->resetPossibleMoves();
-    nextTurn();
+    state.nextTurn();
 
-    printGameState();
+#ifdef DEBUG
+    board->printSelf();
+    state.print();
+#endif
 }
 
-void Game::nextTurn()
+void Game::handleIllegalMove()
 {
-    state.currentSide =
-        state.currentSide == Side::White ? Side::Black : Side::White;
+    state.selectedPiece = std::nullopt;
+    board->resetSelectedCell();
+    board->resetPossibleMoves();
+    SoundManager::playSound(SoundKind::IllegalMove);
 }
 
 GameState &Game::getState() { return state; }
-
-void Game::printGameState()
-{
-    std::cout << "BOARD:" << "\n";
-    board->printSelf();
-    std::cout << "\n\n";
-
-    std::cout << "SELECTED PIECE: ";
-    if(state.selectedPiece.has_value())
-        state.selectedPiece.value().get().printSelf();
-    std::cout << "\n";
-}

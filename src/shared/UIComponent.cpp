@@ -13,7 +13,11 @@ void UIComponent::addChild(std::shared_ptr<UIComponent> child)
 
 void UIComponent::removeChild(std::shared_ptr<UIComponent> child)
 {
-    auto it = std::find(children.begin(), children.begin(), child);
+    auto it = std::find_if(children.begin(), children.end(),
+                           [&](const auto &currentChild) {
+                               return currentChild->id == child->id;
+                           });
+
     if(it != children.end())
     {
         (*it)->parent = nullptr;

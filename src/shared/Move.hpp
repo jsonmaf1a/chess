@@ -9,4 +9,5 @@ struct Move
     Piece &piece;
     sf::Vector2i from;
     sf::Vector2i to;
+    std::optional<PieceKind> captured;
 };
