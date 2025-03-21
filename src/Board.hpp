@@ -57,8 +57,9 @@ class Board : public UIComponent
     void printSelf() const;
 
   private:
-    std::shared_ptr<Piece> _board[BoardConfig::GridSize]
-                                 [BoardConfig::GridSize] = {nullptr};
+    std::array<std::array<std::shared_ptr<Piece>, BoardConfig::GridSize>,
+               BoardConfig::GridSize>
+        _board = {nullptr};
 
     std::optional<std::pair<sf::Vector2i, sf::Vector2i>> lastMoveCells =
         std::nullopt;
