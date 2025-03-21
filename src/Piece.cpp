@@ -35,11 +35,11 @@ void Piece::setPosition(sf::Vector2i position)
 
 void Piece::updatePositionWithTransition(sf::Vector2i position)
 {
-    float transitioDuration = 0.5f;
+    float transitionDurationSecs = 0.5f;
     auto positionTransition =
         std::make_shared<PropertyTransition<sf::Vector2f>>(
             static_cast<sf::Vector2f>(currentPosition),
-            static_cast<sf::Vector2f>(position), transitioDuration,
+            static_cast<sf::Vector2f>(position), transitionDurationSecs,
             [this](sf::Vector2f newPosition) {
                 sprite.setPosition(normalizeSpritePosition(newPosition));
             });
@@ -79,28 +79,7 @@ std::string Piece::getPieceTexturePath(PieceKind kind, Side side)
 
 std::string_view Piece::getStringifiedKind() const
 {
-    return Piece::pieceKindToString(kind);
-}
-
-std::string_view Piece::pieceKindToString(PieceKind kind)
-{
-    switch(kind)
-    {
-        case PieceKind::Pawn:
-            return "pawn";
-        case PieceKind::Knight:
-            return "knight";
-        case PieceKind::Bishop:
-            return "bishop";
-        case PieceKind::Rook:
-            return "rook";
-        case PieceKind::Queen:
-            return "queen";
-        case PieceKind::King:
-            return "king";
-        default:
-            return "unknown";
-    }
+    return StringUtils::stringify(kind);
 }
 
 Side Piece::getSide() const { return side; }

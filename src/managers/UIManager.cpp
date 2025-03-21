@@ -1,13 +1,5 @@
 #include "UIManager.hpp"
-#include "../Sidebar.hpp"
-#include "../shared/config/Layout.hpp"
 #include "TransitionManager.hpp"
-
-void UIManager::init(sf::RenderWindow &window)
-{
-    addComponent(std::make_shared<Sidebar>(window, LayoutConfig::SidebarBounds,
-                                           LayoutConfig::SidebarViewport));
-}
 
 void UIManager::addComponent(std::shared_ptr<UIComponent> component)
 {

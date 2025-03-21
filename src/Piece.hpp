@@ -44,7 +44,6 @@ class Piece : public UIComponent
     Side getSide() const;
     PieceKind getKind() const;
 
-    static std::string_view pieceKindToString(PieceKind kind);
     std::string_view getStringifiedKind() const;
 
     void printLegalMoves() const;

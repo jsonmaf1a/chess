@@ -1,17 +1,12 @@
 #pragma once
 
 #include "Board.hpp"
+#include "GameState.hpp"
 #include "managers/UIManager.hpp"
 #include "shared/EventHandler.hpp"
-#include "shared/GameData.hpp"
-#include "shared/Move.hpp"
 #include "shared/config/Layout.hpp"
+#include <memory>
 
-// TODO:
-// * Count all moves to follow 50-move rule
-// * Handle:
-// * - mate (win/lose)
-// * - stalemate (no possible moves, repetitions)
 class Game : public EventHandler
 {
   public:
@@ -28,6 +23,7 @@ class Game : public EventHandler
     virtual EventResult handleEvent(const EventContext &eventCtx) override;
 
     void start();
+    void update();
     void move(Piece &piece, sf::Vector2i newPosition);
     void nextTurn();
     bool isCheckmate();
@@ -37,15 +33,13 @@ class Game : public EventHandler
     void handlePieceSelection(const sf::Vector2i cellPosition,
                               const std::shared_ptr<Piece> maybePiece);
 
+    GameState &getState();
+
     void printGameState();
 
   private:
     sf::RenderWindow &window;
     UIManager &ui;
     std::shared_ptr<Board> board;
-    std::vector<std::unique_ptr<Move>> moves;
-    std::optional<std::reference_wrapper<Piece>> selectedPiece;
-
-    Side currentSide = Side::White;
-    bool isStarted = false;
+    GameState state = {50, Side::White, false, GameModePresets::Rapid10};
 };

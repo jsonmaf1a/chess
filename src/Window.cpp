@@ -10,8 +10,6 @@ Window::Window(uint width, uint height, const std::string &title)
                   sf::State::Windowed);
     window.setVerticalSyncEnabled(true);
 
-    ui.init(window);
-
     isInitialized = true;
 }
 

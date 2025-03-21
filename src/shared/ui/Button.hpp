@@ -2,7 +2,6 @@
 
 #include "../../managers/FontManager.hpp"
 #include "../UIComponent.hpp"
-#include "../config/Layout.hpp"
 #include <functional>
 
 class Button : public UIComponent
@@ -20,10 +19,13 @@ class Button : public UIComponent
         , font(FontManager::getFont(fontStyle))
         , fontSize(fontSize)
     {
+        sf::Vector2f normViewportPosition = {
+            bounds.position.x / getBounds().position.x,
+            bounds.position.y / getBounds().position.y};
+        sf::Vector2f normViewportSize = {bounds.size.x / getBounds().size.x,
+                                         bounds.size.y / getBounds().size.y};
+
         setView(bounds);
-        view->setViewport(sf::FloatRect(
-            {0.f, 0.f}, {LayoutConfig::SidebarViewport.size.x,
-                         LayoutConfig::SidebarViewport.size.y / 8.f}));
     };
     ~Button() = default;
 

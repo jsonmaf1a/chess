@@ -15,7 +15,6 @@ class UIManager
     void removeComponent(std::shared_ptr<UIComponent> component);
     void handleEvent(const EventContext &event);
     void draw(sf::RenderWindow &window);
-    void init(sf::RenderWindow &window);
 
   private:
     std::vector<std::shared_ptr<UIComponent>> rootComponents;

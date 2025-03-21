@@ -66,10 +66,6 @@ class Board : public UIComponent
     std::optional<sf::Vector2i> selectedCell = std::nullopt;
     std::vector<sf::Vector2i> possibleMoves;
 
-    // TODO: intoduce theme manager and use it to get colors and shit
-    static constexpr sf::Color colorDark = {119, 148, 85, 255};
-    static constexpr sf::Color colorLight = {235, 235, 208, 255};
-
     void drawLabels(sf::RenderWindow &window);
     sf::Color getCellColor(int position) const;
     bool isMouseOverCell(sf::Vector2i mousePos);

@@ -23,7 +23,7 @@ EventResult Sidebar::handleSelfEvent(const EventContext &eventCtx)
     {
         const auto mouseMoved = eventCtx.event.getIf<sf::Event::MouseMoved>();
 
-        auto normalizedPosition = PositionUtils::getNormalizedMousePosition(
+        auto normalizedPosition = PositionUtils::normalizePosition(
             mouseMoved->position, eventCtx.window);
 
         // float normX = static_cast<float>((mouseMoved->position.x)) /

@@ -10,13 +10,16 @@ struct Notation
     char file;
     char rank;
 
-    Notation(char file, char rank)
-        : file(file)
-        , rank(rank)
-    {}
+    template <typename T>
+        requires std::is_arithmetic_v<T>
+    static Notation toChessNotation(const sf::Vector2<T> position)
+    {
+        char file = 'A' + position.x;
+        char rank = '8' - position.y;
 
-    static Notation toChessNotation(const sf::Vector2i &pos);
-    static Notation toChessNotation(const sf::Vector2f &pos);
+        return Notation(file, rank);
+    }
+
     static sf::Vector2i fromChessNotation(const Notation &notation);
     static sf::Vector2i fromChessNotation(const std::string &notation);
 

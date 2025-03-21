@@ -1,5 +1,6 @@
 #include "Board.hpp"
 #include "managers/FontManager.hpp"
+#include "managers/ThemeManager.hpp"
 #include "pieces/Bishop.hpp"
 #include "pieces/King.hpp"
 #include "pieces/Knight.hpp"
@@ -96,28 +97,25 @@ void Board::drawPossibleMove(sf::RenderWindow &window,
 
 void Board::drawHighlights(sf::RenderWindow &window)
 {
-    const int defaultAlpha = 60;
+    Theme theme = ThemeManager::getTheme();
 
     if(hoveredCell)
     {
-        sf::Color color = sf::Color::Black;
-        color.a = 10;
+        sf::Color color = theme.board.hovered;
 
         drawCell(window, hoveredCell.value(), color);
     }
 
     if(selectedCell)
     {
-        sf::Color color = sf::Color::Yellow;
-        color.a = defaultAlpha;
+        sf::Color color = theme.board.selected;
 
         drawCell(window, selectedCell.value(), color);
     }
 
     if(lastMoveCells)
     {
-        sf::Color color = sf::Color::Yellow;
-        color.a = defaultAlpha;
+        sf::Color color = theme.board.highlighted;
 
         drawCell(window, lastMoveCells.value().first, color);
         drawCell(window, lastMoveCells.value().second, color);
@@ -126,6 +124,7 @@ void Board::drawHighlights(sf::RenderWindow &window)
 
 void Board::drawLabels(sf::RenderWindow &window)
 {
+    Theme theme = ThemeManager::getTheme();
     const sf::Font &font = FontManager::getFont(FontStyle::Semibold);
     const int fontSize = 12;
 
@@ -140,15 +139,17 @@ void Board::drawLabels(sf::RenderWindow &window)
         bool isFileOnDark = ((BoardConfig::GridSize - 1) + i) % 2 != 0;
         bool isRankOnDark = ((BoardConfig::GridSize - 1 - i) % 2 != 0);
 
-        sf::Color fileTextColor = isFileOnDark ? colorLight : colorDark;
-        sf::Color rankTextColor = isRankOnDark ? colorLight : colorDark;
+        sf::Color fileTextColor =
+            isFileOnDark ? theme.board.light : theme.board.dark;
+        sf::Color rankTextColor =
+            isRankOnDark ? theme.board.light : theme.board.dark;
 
         sf::Text fileLabel(font, std::string(1, 'a' + i), fontSize);
         fileLabel.setFillColor(fileTextColor);
         fileLabel.setPosition(filePos);
         window.draw(fileLabel);
 
-        sf::Text rankLabel(font, std::to_string(8 - i), fontSize);
+        sf::Text rankLabel(font, std::to_string(1 + i), fontSize);
         rankLabel.setFillColor(rankTextColor);
         rankLabel.setPosition(rankPos);
         window.draw(rankLabel);
@@ -166,7 +167,7 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
 
         const auto mousePos = mouseMovedEvent->position;
         sf::Vector2f normalizedMousePos =
-            PositionUtils::getNormalizedMousePosition(mousePos, window);
+            PositionUtils::normalizePosition(mousePos, window);
 
         if(!viewportContains(normalizedMousePos))
         {
@@ -274,7 +275,8 @@ void Board::createPieces()
 
 sf::Color Board::getCellColor(int cellPosition) const
 {
-    return cellPosition % 2 == 0 ? colorLight : colorDark;
+    Theme theme = ThemeManager::getTheme();
+    return cellPosition % 2 == 0 ? theme.board.light : theme.board.dark;
 };
 
 bool Board::isMouseOverCell(sf::Vector2i mousePos)
