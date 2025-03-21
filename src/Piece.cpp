@@ -79,7 +79,7 @@ std::string Piece::getPieceTexturePath(PieceKind kind, Side side)
 
 std::string_view Piece::getStringifiedKind() const
 {
-    return StringUtils::stringify(kind);
+    return StringUtils::toString(kind);
 }
 
 Side Piece::getSide() const { return side; }

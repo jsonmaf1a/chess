@@ -29,7 +29,7 @@ struct GameState
 {
     unsigned int fiftyMoveCounter;
     Side currentSide;
-    bool isStarted;
+    bool isPlaying;
     GameModePreset preset;
 
     Timer whiteTimer;
@@ -47,7 +47,7 @@ struct GameState
 
         if(currentTimer.millis == 0)
         {
-            isStarted = false;
+            isPlaying = false;
             std::cout << "Game over, someone lost!";
         }
     }
@@ -65,14 +65,14 @@ struct GameState
         blackTimer.millis = preset.timeControl->millis;
     };
 
-    void nextTurn()
+    void nextSide()
     {
         currentSide = currentSide == Side::White ? Side::Black : Side::White;
     }
 
     void print()
     {
-        std::cout << "Current side: " << StringUtils::stringify(currentSide)
+        std::cout << "Current side: " << StringUtils::toString(currentSide)
                   << "\n";
 
         if(selectedPiece.has_value())
@@ -93,13 +93,13 @@ struct GameState
             auto &move = moves[i];
 
             std::cout << i << ". "
-                      << StringUtils::stringify(move->piece.getSide()) << " "
+                      << StringUtils::toString(move->piece.getSide()) << " "
                       << move->piece.getStringifiedKind() << " moved from ["
                       << move->from.x << move->from.y << "] to [" << move->to.x
                       << move->to.y << "] "
                       << "and captured "
                       << (move->captured
-                              ? StringUtils::stringify(move->captured.value())
+                              ? StringUtils::toString(move->captured.value())
                               : "nothing")
                       << ".\n";
         }

@@ -24,7 +24,7 @@ class Sidebar : public UIComponent
             [&](const EventContext &eventCtx) {
                 std::cout << "click\n";
 
-                state.isStarted = state.isStarted ? false : true;
+                state.isPlaying = state.isPlaying ? false : true;
                 state.initializeClocks();
 
                 return EventResult::Handled;

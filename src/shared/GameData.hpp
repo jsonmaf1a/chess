@@ -11,7 +11,7 @@ enum class Side
     Black,
 };
 
-template <> constexpr std::string_view StringUtils::stringify(Side side)
+template <> constexpr std::string_view StringUtils::toString(Side side)
 {
     switch(side)
     {
@@ -34,7 +34,7 @@ enum class PieceKind
     King,
 };
 
-template <> constexpr std::string_view StringUtils::stringify(PieceKind kind)
+template <> constexpr std::string_view StringUtils::toString(PieceKind kind)
 {
     switch(kind)
     {
@@ -55,6 +55,27 @@ template <> constexpr std::string_view StringUtils::stringify(PieceKind kind)
     }
 }
 
+template <> constexpr char StringUtils::toChar(PieceKind kind)
+{
+    switch(kind)
+    {
+        case PieceKind::Pawn:
+            return 'p';
+        case PieceKind::Knight:
+            return 'n';
+        case PieceKind::Bishop:
+            return 'b';
+        case PieceKind::Rook:
+            return 'r';
+        case PieceKind::Queen:
+            return 'q';
+        case PieceKind::King:
+            return 'k';
+        default:
+            std::unreachable();
+    }
+}
+
 enum class GameMode
 {
     Classic,
@@ -64,7 +85,7 @@ enum class GameMode
     Custom
 };
 
-template <> constexpr std::string_view StringUtils::stringify(GameMode mode)
+template <> constexpr std::string_view StringUtils::toString(GameMode mode)
 {
     switch(mode)
     {
@@ -126,7 +147,7 @@ namespace GameModePresets
                                              TimeControl{60 * 2 * 1000,
                                                          1 * 1000});
 
-    static constexpr GameModePreset createCustomPreset(TimeControl timeControl)
+    static constexpr GameModePreset Custom(TimeControl timeControl)
     {
         return GameModePreset(GameMode::Custom, timeControl);
     }

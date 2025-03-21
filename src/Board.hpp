@@ -39,6 +39,7 @@ class Board : public UIComponent
 
     void initializePieces();
     void createPieces();
+    void swapPieces(sf::Vector2i p1, sf::Vector2i p2);
     void updatePiecePosition(Piece &piece, sf::Vector2i newPosition);
     std::shared_ptr<Piece> getPiece(sf::Vector2i cellPosition) const;
     std::vector<std::shared_ptr<Piece>> getPiecesOnBoard();
@@ -54,6 +55,7 @@ class Board : public UIComponent
     void resetPossibleMoves();
 
     const sf::View &getView() const;
+
     void printSelf() const;
 
   private:

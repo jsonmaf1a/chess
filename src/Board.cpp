@@ -25,7 +25,9 @@ void Board::initializePieces()
         }
     }
 
+#ifdef DEBUG
     printSelf();
+#endif // DEBUG
 }
 
 void Board::drawSelf(sf::RenderWindow &window)
@@ -228,6 +230,24 @@ void Board::updatePiecePosition(Piece &piece, sf::Vector2i newPosition)
     piece.updatePositionWithTransition(newPosition);
 }
 
+void Board::swapPieces(sf::Vector2i pos1, sf::Vector2i pos2)
+{
+    auto piece1 = getPiece(pos1);
+    auto piece2 = getPiece(pos2);
+
+    if(!piece1 || !piece2)
+        return;
+
+    sf::Vector2i pos1Current = piece1->getPosition();
+    sf::Vector2i pos2Current = piece2->getPosition();
+
+    piece1->updatePositionWithTransition(pos2Current);
+    piece2->updatePositionWithTransition(pos1Current);
+
+    _board[pos1.x][pos1.y] = std::move(piece2);
+    _board[pos2.x][pos2.y] = std::move(piece1);
+}
+
 template <typename T>
     requires std::is_base_of<Piece, T>::value
 void Board::placePiece(const std::string &pos, Side side)
@@ -305,6 +325,30 @@ sf::Vector2i Board::getCellFromMousePos(const sf::Vector2i mousePos,
                         localMousePos.y / BoardConfig::CellSize);
 }
 
+void Board::setSelectedCell(const sf::Vector2i cellPosition)
+{
+    selectedCell = cellPosition;
+}
+void Board::setHoveredCell(const sf::Vector2i cellPosition)
+{
+    hoveredCell = cellPosition;
+}
+void Board::setLastMoveCells(const Move move)
+{
+    lastMoveCells = std::make_pair(move.from, move.to);
+}
+
+void Board::setPossibleMoves(const std::vector<sf::Vector2i> possibleMoves)
+{
+
+    this->possibleMoves = possibleMoves;
+}
+
+void Board::resetSelectedCell() { selectedCell = std::nullopt; }
+void Board::resetHoveredCell() { hoveredCell = std::nullopt; }
+void Board::resetLastMoveCells() { lastMoveCells = std::nullopt; }
+void Board::resetPossibleMoves() { possibleMoves.clear(); }
+
 void Board::printSelf() const
 {
     for(int col = 0; col < BoardConfig::GridSize; col++)
@@ -329,27 +373,3 @@ void Board::printSelf() const
 
     std::cout << "\n";
 }
-
-void Board::setSelectedCell(const sf::Vector2i cellPosition)
-{
-    selectedCell = cellPosition;
-}
-void Board::setHoveredCell(const sf::Vector2i cellPosition)
-{
-    hoveredCell = cellPosition;
-}
-void Board::setLastMoveCells(const Move move)
-{
-    lastMoveCells = std::make_pair(move.from, move.to);
-}
-
-void Board::setPossibleMoves(const std::vector<sf::Vector2i> possibleMoves)
-{
-
-    this->possibleMoves = possibleMoves;
-}
-
-void Board::resetSelectedCell() { selectedCell = std::nullopt; }
-void Board::resetHoveredCell() { hoveredCell = std::nullopt; }
-void Board::resetLastMoveCells() { lastMoveCells = std::nullopt; }
-void Board::resetPossibleMoves() { possibleMoves.clear(); }

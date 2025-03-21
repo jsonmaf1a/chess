@@ -1,5 +1,3 @@
-#define DEBUG
-
 #include "Game.hpp"
 #include "Sidebar.hpp"
 #include "Window.hpp"
