@@ -1,4 +1,0 @@
-# CompileFlags:
-#   Add:
-#     - -I/home/hapka/dev/chess-cpp/include
-#     - -std=c++23
