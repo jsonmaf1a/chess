@@ -38,6 +38,8 @@ int main()
         LayoutConfig::SidebarViewport, game->getState());
     ui.addComponent(sidebar);
 
+    sidebar->addButtons();
+
     while(window.isOpen())
     {
         window.pollEvents();

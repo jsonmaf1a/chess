@@ -1,13 +1,89 @@
-#include "UIComponent.hpp"
+#include "shared/UIComponent.hpp"
+#include "shared/config/Layout.hpp"
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
-
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+bool almostEqual(float a, float b, float epsilon = 0.001f)
+{
+    return std::abs(a - b) < epsilon;
+}
+
+sf::FloatRect UIComponent::createViewport()
+{
+    sf::Vector2f parentSize = LayoutConfig::WindowSize;
+    sf::Vector2f parentPosition = sf::Vector2f{0.f, 0.f};
+
+    float siblingOffsetX = 0.f;
+    float siblingOffsetY = 0.f;
+
+    if(auto parentLock = parent.lock())
+    {
+        parentSize = parentLock->getBounds().size;
+        parentPosition = parentLock->getBounds().position;
+
+        for(const auto sibling : parentLock->children)
+        {
+
+            if(sibling->id == this->id)
+                break;
+
+            std::cout << sibling->getBounds().size.x << getBounds().size.x
+                      << "\n";
+
+            // if(sibling->getBounds().size.x == getBounds().size.x)
+            // {
+            //     siblingOffsetY += sibling->getBounds().size.y;
+            // }
+            // else
+
+            siblingOffsetX += sibling->getBounds().size.x;
+            if(siblingOffsetX > sibling->getBounds().size.x ||
+               almostEqual(siblingOffsetX, sibling->getBounds().size.x))
+            {
+                siblingOffsetX = 0.f;
+                siblingOffsetY += sibling->getBounds().size.y;
+            }
+        }
+    }
+
+    float relPosX =
+        (siblingOffsetX + getBounds().position.x - parentPosition.x) /
+        parentSize.x;
+    float relPosY =
+        (siblingOffsetY + getBounds().position.y - parentPosition.y) /
+        parentSize.y;
+    float relWidth = getBounds().size.x / parentSize.x;
+    float relHeight = getBounds().size.y / parentSize.y;
+
+    float xScaleFactor = parentSize.x / LayoutConfig::WindowSize.x;
+    relPosX *= xScaleFactor;
+    relWidth *= xScaleFactor;
+
+    float yScaleFactor = parentSize.y / LayoutConfig::WindowSize.y;
+    relPosY *= yScaleFactor;
+    relHeight *= yScaleFactor;
+
+    return sf::FloatRect({relPosX, relPosY}, {relWidth, relHeight});
+}
+
+void UIComponent::enableView(sf::View view)
+{
+    this->view = view;
+    this->view->setViewport(createViewport());
+};
+
+void UIComponent::enableView()
+{
+    this->view = sf::View(bounds);
+    view->setViewport(createViewport());
+};
+
 void UIComponent::addChild(std::shared_ptr<UIComponent> child)
 {
-    child->parent = this;
+    child->parent = weak_from_this();
     children.push_back(child);
 }
 
@@ -20,7 +96,7 @@ void UIComponent::removeChild(std::shared_ptr<UIComponent> child)
 
     if(it != children.end())
     {
-        (*it)->parent = nullptr;
+        (*it)->parent.reset();
         children.erase(it);
     }
 }
@@ -71,6 +147,10 @@ void UIComponent::setBounds(const sf::FloatRect &bounds)
 }
 
 const sf::FloatRect &UIComponent::getBounds() const { return bounds; }
+const std::optional<sf::View> &UIComponent::getView() const { return view; }
+
+// void UIComponent::setView(sf::View view) { this->view = view; };
+// void UIComponent::setView(sf::FloatRect bounds) { view = sf::View(bounds); };
 
 void UIComponent::printChildren() const
 {

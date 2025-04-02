@@ -1,5 +1,5 @@
-#include "Queen.hpp"
-#include "../shared/config/Board.hpp"
+#include "pieces/Queen.hpp"
+#include "shared/config/Board.hpp"
 
 std::vector<sf::Vector2i> Queen::getLegalMoves() const
 {

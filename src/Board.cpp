@@ -25,9 +25,7 @@ void Board::initializePieces()
         }
     }
 
-#ifdef DEBUG
     printSelf();
-#endif // DEBUG
 }
 
 void Board::drawSelf(sf::RenderWindow &window)
@@ -42,9 +40,9 @@ void Board::drawSelf(sf::RenderWindow &window)
         }
     }
 
-    for(const auto &pos : possibleMoves)
+    for(const auto &[pos, isCapture] : possibleMoves)
     {
-        drawPossibleMove(window, pos);
+        drawPossibleMove(window, pos, isCapture);
     }
 
     drawLabels(window);
@@ -67,34 +65,45 @@ void Board::drawCell(sf::RenderWindow &window, sf::Vector2i position,
 }
 
 void Board::drawPossibleMove(sf::RenderWindow &window,
-                             const sf::Vector2i position)
+                             const sf::Vector2i position, const bool isCapture)
 {
     const int alpha = 30;
     sf::Color color = sf::Color(0, 0, 0, alpha);
 
-    if(!getPiece(position))
+    std::unique_ptr<sf::Drawable> moveIndicator;
+
+    if(!isCapture)
     {
         const float radius = 15.f;
-        sf::CircleShape circle(radius);
-        circle.setFillColor(color);
-        circle.setPosition({position.x * BoardConfig::CellSize +
-                                BoardConfig::CellSize / 2.f - radius,
-                            position.y * BoardConfig::CellSize +
-                                BoardConfig::CellSize / 2.f - radius});
-        window.draw(circle);
+
+        auto circle = std::make_unique<sf::CircleShape>(radius, 256);
+        circle->setFillColor(color);
+
+        circle->setOrigin({radius, radius});
+
+        moveIndicator = std::move(circle);
     }
     else
     {
-        const int offset = 5.f;
+        const int offset = 2.f;
         const float outer = BoardConfig::CellSize / 2.f - offset;
         const float inner = outer - 10.f;
-        VertexShapes::Ring ring(inner, outer);
-        ring.setFillColor(color);
-        ring.setPosition(
+
+        auto ring = std::make_unique<VertexShapes::Ring>(inner, outer);
+        ring->setFillColor(color);
+
+        moveIndicator = std::move(ring);
+    }
+
+    if(auto *transformable =
+           dynamic_cast<sf::Transformable *>(moveIndicator.get()))
+    {
+        transformable->setPosition(
             {position.x * BoardConfig::CellSize + BoardConfig::CellSize / 2.f,
              position.y * BoardConfig::CellSize + BoardConfig::CellSize / 2.f});
-        window.draw(ring);
     }
+
+    window.draw(*moveIndicator);
 }
 
 void Board::drawHighlights(sf::RenderWindow &window)
@@ -179,8 +188,7 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
             return EventResult::Handled;
         }
 
-        auto cellPosition =
-            sf::Vector2i(getCellFromMousePos(mousePos, window, view.value()));
+        auto cellPosition = sf::Vector2i(getCellFromMousePos(window, mousePos));
 
         if(isMouseOverCell(cellPosition))
         {
@@ -200,25 +208,6 @@ EventResult Board::handleSelfEvent(const EventContext &eventCtx)
     return EventResult::Ignored;
 }
 
-std::vector<std::shared_ptr<Piece>> Board::getPiecesOnBoard()
-{
-    std::vector<std::shared_ptr<Piece>> filtered;
-
-    for(int i = 0; i < BoardConfig::GridSize; ++i)
-    {
-        for(int j = 0; j < BoardConfig::GridSize; ++j)
-        {
-            auto &piece = _board[i][j];
-            if(piece != nullptr)
-            {
-                filtered.push_back(piece);
-            }
-        }
-    }
-
-    return filtered;
-}
-
 void Board::updatePiecePosition(Piece &piece, sf::Vector2i newPosition)
 {
     sf::Vector2i piecePosition = sf::Vector2i{piece.getPosition()};
@@ -230,40 +219,75 @@ void Board::updatePiecePosition(Piece &piece, sf::Vector2i newPosition)
     piece.updatePositionWithTransition(newPosition);
 }
 
-void Board::swapPieces(sf::Vector2i pos1, sf::Vector2i pos2)
+std::vector<std::pair<sf::Vector2i, bool>> Board::getValidMoves(
+    Piece &piece) const
 {
-    auto piece1 = getPiece(pos1);
-    auto piece2 = getPiece(pos2);
+    std::vector<std::pair<sf::Vector2i, bool>> validMoves;
+    std::vector<sf::Vector2i> legalMoves = piece.getLegalMoves();
 
-    if(!piece1 || !piece2)
-        return;
+    for(const auto &move : legalMoves)
+    {
+        if(move.x < 0 || move.x >= BoardConfig::GridSize || move.y < 0 ||
+           move.y >= BoardConfig::GridSize)
+            continue;
 
-    sf::Vector2i pos1Current = piece1->getPosition();
-    sf::Vector2i pos2Current = piece2->getPosition();
+        std::shared_ptr<Piece> targetPiece = getPiece(move);
 
-    piece1->updatePositionWithTransition(pos2Current);
-    piece2->updatePositionWithTransition(pos1Current);
+        if(piece.getKind() == PieceKind::Pawn)
+        {
+            // Forward moves must be empty
+            if(move.x == piece.getPosition().x)
+            {
+                if(!targetPiece)
+                    validMoves.push_back({move, false});
+            }
+            // Diagonal moves must be captures
+            else if(targetPiece && targetPiece->getSide() != piece.getSide())
+            {
+                validMoves.push_back({move, true});
+            }
+            continue;
+        }
 
-    _board[pos1.x][pos1.y] = std::move(piece2);
-    _board[pos2.x][pos2.y] = std::move(piece1);
+        // Standard logic for non-pawn pieces
+        if(!targetPiece)
+        {
+            validMoves.push_back({move, false});
+        }
+        else if(targetPiece->getSide() != piece.getSide())
+        {
+            validMoves.push_back({move, true});
+        }
+    }
+
+    return validMoves;
 }
+bool Board::isValidMove(Piece &piece, sf::Vector2i newPosition) const
+{
+    auto moves = getValidMoves(piece);
+    // auto it = std::find(moves.begin(), moves.end(), newPosition);
+
+    auto it = std::find_if(moves.begin(), moves.end(),
+                           [&](std::pair<sf::Vector2i, bool> item) {
+                               return item.first == newPosition;
+                           });
+
+    return it != moves.end();
+};
 
 template <typename T>
     requires std::is_base_of<Piece, T>::value
 void Board::placePiece(const std::string &pos, Side side)
 {
-    auto [row, col] = Notation::fromChessNotation(pos);
-
-    std::shared_ptr<Piece> piece = std::make_shared<T>(side);
-    piece->setPosition({row, col});
-
-    _board[row][col] = std::move(piece);
+    auto position = Notation::fromChessNotation(pos);
+    std::shared_ptr<Piece> piece = std::make_shared<T>(side, position);
+    _board[position.x][position.y] = std::move(piece);
 }
 
 void Board::createPieces()
 {
-    static constexpr std::string WHITE_PAWNS_ROW = "2";
-    static constexpr std::string BLACK_PAWNS_ROW = "7";
+    const std::string WHITE_PAWNS_ROW = "2";
+    const std::string BLACK_PAWNS_ROW = "7";
 
     for(char file = 'A'; file <= 'H'; file++)
     {
@@ -313,13 +337,11 @@ std::shared_ptr<Piece> Board::getPiece(sf::Vector2i cellPosition) const
     return _board[cellPosition.x][cellPosition.y];
 }
 
-const sf::View &Board::getView() const { return view.value(); }
-
-sf::Vector2i Board::getCellFromMousePos(const sf::Vector2i mousePos,
-                                        const sf::RenderWindow &window,
-                                        const sf::View &view) const
+sf::Vector2i Board::getCellFromMousePos(const sf::RenderWindow &window,
+                                        const sf::Vector2i mousePos) const
 {
-    sf::Vector2f localMousePos = window.mapPixelToCoords(mousePos, view);
+    sf::Vector2f localMousePos =
+        window.mapPixelToCoords(mousePos, getView().value());
 
     return sf::Vector2i(localMousePos.x / BoardConfig::CellSize,
                         localMousePos.y / BoardConfig::CellSize);
@@ -338,9 +360,9 @@ void Board::setLastMoveCells(const Move move)
     lastMoveCells = std::make_pair(move.from, move.to);
 }
 
-void Board::setPossibleMoves(const std::vector<sf::Vector2i> possibleMoves)
+void Board::setPossibleMoves(
+    const std::vector<std::pair<sf::Vector2i, bool>> possibleMoves)
 {
-
     this->possibleMoves = possibleMoves;
 }
 
@@ -357,15 +379,9 @@ void Board::printSelf() const
         {
             auto maybePiece = _board[row][col];
             if(maybePiece)
-            {
-                std::cout << (maybePiece->getKind() == PieceKind::Knight
-                                  ? 'n'
-                                  : maybePiece->getStringifiedKind()[0]);
-            }
+                std::cout << StringUtils::toChar(maybePiece->getKind());
             else
-            {
                 std::cout << ".";
-            }
             std::cout << " ";
         }
         std::cout << "\n";

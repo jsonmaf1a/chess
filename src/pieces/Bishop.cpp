@@ -1,5 +1,5 @@
-#include "Bishop.hpp"
-#include "../shared/config/Board.hpp"
+#include "pieces/Bishop.hpp"
+#include "shared/config/Board.hpp"
 #include <cmath>
 
 std::vector<sf::Vector2i> Bishop::getLegalMoves() const

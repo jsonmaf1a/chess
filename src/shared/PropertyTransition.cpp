@@ -1,5 +1,5 @@
-#include "PropertyTransition.hpp"
-#include "utils/TransitionUtils.hpp"
+#include "shared/PropertyTransition.hpp"
+#include "shared/utils/TransitionUtils.hpp"
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>

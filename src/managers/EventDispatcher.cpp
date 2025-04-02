@@ -1,4 +1,4 @@
-#include "EventDispatcher.hpp"
+#include "managers/EventDispatcher.hpp"
 
 void EventDispatcher::registerListener(std::shared_ptr<EventHandler> listener)
 {

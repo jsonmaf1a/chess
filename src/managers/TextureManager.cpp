@@ -1,4 +1,4 @@
-#include "TextureManager.hpp"
+#include "managers/TextureManager.hpp"
 #include <unordered_map>
 
 namespace
@@ -14,6 +14,7 @@ namespace TextureManager
         if(it == textures.end())
         {
             sf::Texture texture;
+            texture.setSmooth(true);
 
             if(!texture.loadFromFile(path))
                 throw std::runtime_error("Failed to load texture: " + path);

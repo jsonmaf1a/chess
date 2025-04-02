@@ -9,15 +9,18 @@
 #include <math.h>
 
 Piece::Piece(PieceKind kind, Side side, sf::Vector2i position)
-    : UIComponent({SPRITE_SIZE, SPRITE_SIZE})
+    : UIComponent({BoardConfig::CellSize, BoardConfig::CellSize})
     , currentPosition(position)
     , kind(kind)
     , side(side)
-    , texture(TextureManager::getTexture(getPieceTexturePath(kind, side)))
+    , texture(TextureManager::getTexture(getTexturePath(kind, side)))
     , sprite(texture)
 {
     sprite.setTexture(texture, true);
-    sprite.setScale({SPRITE_SCALE, SPRITE_SCALE});
+
+    float scaleFactor = BoardConfig::CellSize / SPRITE_SIZE;
+
+    sprite.setScale({scaleFactor, scaleFactor});
 
     sf::FloatRect spriteBounds = sprite.getLocalBounds();
     sprite.setOrigin({spriteBounds.size.x / 2.f, spriteBounds.size.y / 2.f});
@@ -70,16 +73,13 @@ bool Piece::isLegalMove(sf::Vector2i newPosition) const
 
 sf::Vector2i Piece::getPosition() const { return currentPosition; }
 
-std::string Piece::getPieceTexturePath(PieceKind kind, Side side)
+std::string Piece::getTexturePath(PieceKind kind, Side side)
 {
-    return std::format("{}/{}/{}.png", BASE_TEXTURES_PATH,
-                       (side == Side::White ? "white" : "black"),
-                       getStringifiedKind());
-}
+    const char *BASE_TEXTURES_PATH = "./assets/textures/pieces";
 
-std::string_view Piece::getStringifiedKind() const
-{
-    return StringUtils::toString(kind);
+    return std::format("{}/x{}/{}/{}.png", BASE_TEXTURES_PATH, SPRITE_SIZE,
+                       StringUtils::toString(side),
+                       StringUtils::toString(kind));
 }
 
 Side Piece::getSide() const { return side; }
@@ -106,5 +106,5 @@ void Piece::printLegalMoves() const
 void Piece::printSelf() const
 {
     std::cout << (side == Side::White ? "white" : "black") << " "
-              << getStringifiedKind();
+              << StringUtils::toString(kind);
 }

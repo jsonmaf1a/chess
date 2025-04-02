@@ -6,9 +6,15 @@ Window::Window(uint width, uint height, const std::string &title)
     : ui(dispatcher)
     , cursorManager(window)
 {
-    window.create(sf::VideoMode({width, height}), title, sf::Style::Default,
+    window.create(sf::VideoMode({width, height}), title, sf::Style::Close,
                   sf::State::Windowed);
     window.setVerticalSyncEnabled(true);
+
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+    int x = (desktop.size.x - width) / 2;
+    int y = (desktop.size.y - height) / 2;
+
+    window.setPosition(sf::Vector2i(x, y));
 
     isInitialized = true;
 }
@@ -23,7 +29,7 @@ Window::~Window()
 
 void Window::update()
 {
-    window.clear(BACKGROUND);
+    window.clear();
 
     ui.draw(window);
 

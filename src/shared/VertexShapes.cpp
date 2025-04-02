@@ -1,15 +1,14 @@
-#include "VertexShapes.hpp"
+#include "shared/VertexShapes.hpp"
 
 namespace VertexShapes
 {
-
-    Ring::Ring(float innerR, float outerR, unsigned int points)
-        : innerRadius(innerR)
-        , outerRadius(outerR)
+    Ring::Ring(float innerRadius, float outerRadius, unsigned int points)
+        : innerRadius(innerRadius)
+        , outerRadius(outerRadius)
         , pointCount(points)
         , fillColor(sf::Color::White)
     {
-        setOrigin({0.f, 0.f});
+        setOrigin({0, 0});
         vertices.setPrimitiveType(sf::PrimitiveType::TriangleStrip);
         updateGeometry();
     }
