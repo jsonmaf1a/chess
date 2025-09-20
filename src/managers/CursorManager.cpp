@@ -1,4 +1,4 @@
-#include "managers/CursorManager.hpp"
+#include "CursorManager.hpp"
 
 CursorManager::CursorManager(sf::RenderWindow &window)
     : window(window)

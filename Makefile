@@ -1,6 +1,7 @@
 CXX = g++
 SRC = $(wildcard src/*.cpp)
-CXXFLAGS = -std=c++23 -MMD -MP -Iinclude
+CXXFLAGS = -std=c++23 -MMD -MP
+# CXXFLAGS = -std=c++23 -MMD -MP -Iinclude
 LDFLAGS = -lpthread -lsfml-window -lsfml-graphics -lsfml-system -lsfml-audio -lsfml-network
 OBJ = $(SRC:src/%.cpp=lib/%.o)
 

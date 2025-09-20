@@ -1,5 +1,5 @@
-#include "pieces/Rook.hpp"
-#include "shared/config/Board.hpp"
+#include "Rook.hpp"
+#include "../shared/config/Board.hpp"
 
 std::vector<sf::Vector2i> Rook::getLegalMoves() const
 {

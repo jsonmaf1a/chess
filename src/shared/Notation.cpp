@@ -1,4 +1,4 @@
-#include "shared/Notation.hpp"
+#include "Notation.hpp"
 #include <stdexcept>
 
 sf::Vector2i Notation::fromChessNotation(const Notation &notation)

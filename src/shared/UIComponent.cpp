@@ -1,5 +1,5 @@
-#include "shared/UIComponent.hpp"
-#include "shared/config/Layout.hpp"
+#include "UIComponent.hpp"
+#include "config/Layout.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>

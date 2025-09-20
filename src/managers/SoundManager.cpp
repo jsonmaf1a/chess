@@ -1,4 +1,4 @@
-#include "managers/SoundManager.hpp"
+#include "SoundManager.hpp"
 #include <iostream>
 
 namespace

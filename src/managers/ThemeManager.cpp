@@ -1,4 +1,4 @@
-#include "managers/ThemeManager.hpp"
+#include "ThemeManager.hpp"
 #include <fstream>
 #include <iostream>
 #include <ostream>

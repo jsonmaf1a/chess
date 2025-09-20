@@ -1,4 +1,4 @@
-#include "shared/VertexShapes.hpp"
+#include "VertexShapes.hpp"
 
 namespace VertexShapes
 {

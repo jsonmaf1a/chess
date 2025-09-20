@@ -1,6 +1,6 @@
-#include "shared/ui/Button.hpp"
-#include "shared/utils/EventUtils.hpp"
-#include "shared/utils/PositionUtils.hpp"
+#include "Button.hpp"
+#include "../utils/EventUtils.hpp"
+#include "../utils/PositionUtils.hpp"
 #include <iostream>
 
 // #define DEBUG

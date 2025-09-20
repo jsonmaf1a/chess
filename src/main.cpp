@@ -29,15 +29,16 @@ int preloadAssets()
     return 0;
 }
 
-int initialize(Window &window, std::shared_ptr<Game> &game)
+int main()
 {
     if(preloadAssets() != 0)
         return -1;
 
+    Window window;
     auto &ui = window.getUI();
     auto &renderWindow = window.getRenderWindow();
 
-    game = std::make_shared<Game>(renderWindow, ui);
+    auto game = std::make_shared<Game>(renderWindow, ui);
     window.getEventDispatcher().registerListener(game);
 
     auto sidebar = std::make_shared<Sidebar>(
@@ -46,17 +47,6 @@ int initialize(Window &window, std::shared_ptr<Game> &game)
     ui.addComponent(sidebar);
 
     sidebar->addButtons();
-
-    return 0;
-}
-
-int main()
-{
-    Window window;
-    std::shared_ptr<Game> game;
-https: // www.youtube.com/watch?v=08C987fQEKU
-    if(initialize(window, game) != 0)
-        return -1;
 
     while(window.isOpen())
     {

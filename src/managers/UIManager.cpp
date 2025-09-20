@@ -1,5 +1,5 @@
-#include "managers/UIManager.hpp"
-#include "managers/TransitionManager.hpp"
+#include "UIManager.hpp"
+#include "TransitionManager.hpp"
 
 void UIManager::addComponent(std::shared_ptr<UIComponent> component)
 {
