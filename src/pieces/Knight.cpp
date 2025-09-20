@@ -22,3 +22,9 @@ std::vector<sf::Vector2i> Knight::getLegalMoves() const
 
     return moves;
 }
+
+std::vector<sf::Vector2i> Knight::getValidMoves(Board &board) const
+{
+    std::vector<sf::Vector2i> moves;
+    return moves;
+}

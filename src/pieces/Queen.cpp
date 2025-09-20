@@ -37,3 +37,9 @@ std::vector<sf::Vector2i> Queen::getLegalMoves() const
 
     return moves;
 }
+
+std::vector<sf::Vector2i> Queen::getValidMoves(Board &board) const
+{
+    std::vector<sf::Vector2i> moves;
+    return moves;
+}

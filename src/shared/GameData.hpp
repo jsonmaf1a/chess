@@ -1,8 +1,8 @@
 #pragma once
 
-#include "utils/StringUtils.hpp"
 #include <string_view>
 #include <utility>
+#include <wisp/utils/StringUtils.hpp>
 
 enum class Side
 {

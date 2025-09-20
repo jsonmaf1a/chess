@@ -1,15 +1,15 @@
 #pragma once
 
 #include "GameState.hpp"
-#include "shared/UIComponent.hpp"
 #include <SFML/System/Vector2.hpp>
+#include <wisp/core/Component.hpp>
 
-class Sidebar : public UIComponent
+class Sidebar : public Component
 {
   public:
     Sidebar(sf::RenderWindow &target, sf::FloatRect bounds,
             sf::FloatRect viewport, GameState &state)
-        : UIComponent(bounds)
+        : Component(bounds)
         , state(state)
     {
         enableView();

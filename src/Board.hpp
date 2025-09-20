@@ -2,20 +2,20 @@
 
 #include "Piece.hpp"
 #include "shared/Move.hpp"
-#include "shared/UIComponent.hpp"
 #include "shared/config/Board.hpp"
+#include <wisp/core/Component.hpp>
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
-class Board : public UIComponent
+class Board : public Component
 {
   public:
     Board(sf::RenderWindow &target, sf::FloatRect bounds,
           sf::FloatRect viewport)
-        : UIComponent(bounds)
+        : Component(bounds)
     {
         enableView();
         // setView(bounds);

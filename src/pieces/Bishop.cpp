@@ -1,6 +1,5 @@
 #include "Bishop.hpp"
 #include "../shared/config/Board.hpp"
-#include <cmath>
 
 std::vector<sf::Vector2i> Bishop::getLegalMoves() const
 {
@@ -34,3 +33,9 @@ std::vector<sf::Vector2i> Bishop::getLegalMoves() const
 
     return moves;
 };
+
+std::vector<sf::Vector2i> Bishop::getValidMoves(Board &board) const
+{
+    std::vector<sf::Vector2i> moves;
+    return moves;
+}

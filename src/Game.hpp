@@ -2,11 +2,11 @@
 
 #include "Board.hpp"
 #include "GameState.hpp"
-#include "managers/UIManager.hpp"
-#include "shared/EventHandler.hpp"
 #include "shared/GameData.hpp"
 #include "shared/config/Layout.hpp"
 #include <memory>
+#include <wisp/core/managers/UIManager.hpp>
+#include <wisp/events/EventHandler.hpp>
 
 class Game : public EventHandler
 {

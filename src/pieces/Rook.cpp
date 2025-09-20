@@ -33,3 +33,9 @@ std::vector<sf::Vector2i> Rook::getLegalMoves() const
 
     return moves;
 };
+
+std::vector<sf::Vector2i> Rook::getValidMoves(Board &board) const
+{
+    std::vector<sf::Vector2i> moves;
+    return moves;
+}

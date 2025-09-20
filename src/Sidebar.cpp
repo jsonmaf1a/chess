@@ -1,20 +1,19 @@
 #include "Sidebar.hpp"
 
 #include "managers/FontManager.hpp"
-#include "shared/utils/PositionUtils.hpp"
+#include "managers/ThemeManager.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
-
-#include "managers/ThemeManager.hpp"
-#include "shared/ui/Button.hpp"
-#include <iostream>
 #include <string>
+#include <wisp/ui/Button.hpp>
+#include <wisp/utils/PositionUtils.hpp>
 
 void Sidebar::addButtons()
 {
 
     auto button = std::make_shared<Button>(
-        sf::Vector2f{bounds.size.x, bounds.size.y / 8.f}, "Play");
+        sf::Vector2f{bounds.size.x, bounds.size.y / 8.f}, "Play",
+        FontManager::getFont(FontStyle::Regular));
 
     auto onClick = [&, button](const EventContext &eventCtx) {
         std::cout << "click\n";
@@ -28,7 +27,7 @@ void Sidebar::addButtons()
 
     auto enableNeonThemeButton = std::make_shared<Button>(
         sf::Vector2f{bounds.size.x / 2.f, bounds.size.y / 8.f},
-        "Apply neon theme");
+        "Apply neon theme", FontManager::getFont(FontStyle::Regular));
 
     enableNeonThemeButton->setOnClick([&](const EventContext &eventCtx) {
         std::cout << "apply neon\n";
@@ -39,7 +38,7 @@ void Sidebar::addButtons()
 
     auto enableDefaultThemeButton = std::make_shared<Button>(
         sf::Vector2f{bounds.size.x / 2.f, bounds.size.y / 8.f},
-        "Apply default theme");
+        "Apply default theme", FontManager::getFont(FontStyle::Regular));
 
     enableDefaultThemeButton->setOnClick([&](const EventContext &eventCtx) {
         std::cout << "apply default\n";

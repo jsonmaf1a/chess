@@ -16,7 +16,5 @@ class Bishop : public Piece
 
     virtual std::vector<sf::Vector2i> getValidMoves(
         Board &boardState) const override;
-
-  protected:
     virtual std::vector<sf::Vector2i> getLegalMoves() const override;
 };

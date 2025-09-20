@@ -1,15 +1,15 @@
 #pragma once
 
 #include "shared/GameData.hpp"
-#include "shared/UIComponent.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <vector>
+#include <wisp/core/Component.hpp>
 
 class Board;
 
 // TODO: drag & drop
-class Piece : public UIComponent
+class Piece : public Component
 {
   protected:
     const PieceKind kind;
@@ -19,7 +19,6 @@ class Piece : public UIComponent
     sf::Sprite sprite;
 
     std::string getTexturePath(PieceKind kind, Side side);
-    virtual std::vector<sf::Vector2i> getLegalMoves() const = 0;
 
   public:
     Piece(PieceKind kind, Side side, sf::Vector2i position);
@@ -29,6 +28,7 @@ class Piece : public UIComponent
 
     virtual void drawSelf(sf::RenderWindow &window) override;
 
+    virtual std::vector<sf::Vector2i> getLegalMoves() const = 0;
     virtual std::vector<sf::Vector2i> getValidMoves(Board &board) const = 0;
     bool isLegalMove(sf::Vector2i newPosition) const;
 

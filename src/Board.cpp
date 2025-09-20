@@ -8,9 +8,9 @@
 #include "pieces/Queen.hpp"
 #include "pieces/Rook.hpp"
 #include "shared/Notation.hpp"
-#include "shared/VertexShapes.hpp"
-#include "shared/utils/PositionUtils.hpp"
 #include <iostream>
+#include <wisp/ui/VertexShapes.hpp>
+#include <wisp/utils/PositionUtils.hpp>
 
 void Board::initializePieces()
 {
@@ -223,43 +223,43 @@ std::vector<std::pair<sf::Vector2i, bool>> Board::getValidMoves(
     Piece &piece) const
 {
     std::vector<std::pair<sf::Vector2i, bool>> validMoves;
-    // std::vector<sf::Vector2i> legalMoves = piece.getLegalMoves();
-    //
-    // for(const auto &move : legalMoves)
-    // {
-    //     if(move.x < 0 || move.x >= BoardConfig::GridSize || move.y < 0 ||
-    //        move.y >= BoardConfig::GridSize)
-    //         continue;
-    //
-    //     std::shared_ptr<Piece> targetPiece = getPiece(move);
-    //
-    //     if(piece.getKind() == PieceKind::Pawn)
-    //     {
-    //         // Forward moves must be empty
-    //         if(move.x == piece.getPosition().x)
-    //         {
-    //             if(!targetPiece)
-    //                 validMoves.push_back({move, false});
-    //         }
-    //         // Diagonal moves must be captures
-    //         else if(targetPiece && targetPiece->getSide() != piece.getSide())
-    //         {
-    //             validMoves.push_back({move, true});
-    //         }
-    //         continue;
-    //     }
-    //
-    //     // Standard logic for non-pawn pieces
-    //     if(!targetPiece)
-    //     {
-    //         validMoves.push_back({move, false});
-    //     }
-    //     else if(targetPiece->getSide() != piece.getSide())
-    //     {
-    //         validMoves.push_back({move, true});
-    //     }
-    // }
-    //
+    std::vector<sf::Vector2i> legalMoves = piece.getLegalMoves();
+
+    for(const auto &move : legalMoves)
+    {
+        if(move.x < 0 || move.x >= BoardConfig::GridSize || move.y < 0 ||
+           move.y >= BoardConfig::GridSize)
+            continue;
+
+        std::shared_ptr<Piece> targetPiece = getPiece(move);
+
+        if(piece.getKind() == PieceKind::Pawn)
+        {
+            // Forward moves must be empty
+            if(move.x == piece.getPosition().x)
+            {
+                if(!targetPiece)
+                    validMoves.push_back({move, false});
+            }
+            // Diagonal moves must be captures
+            else if(targetPiece && targetPiece->getSide() != piece.getSide())
+            {
+                validMoves.push_back({move, true});
+            }
+            continue;
+        }
+
+        // Standard logic for non-pawn pieces
+        if(!targetPiece)
+        {
+            validMoves.push_back({move, false});
+        }
+        else if(targetPiece->getSide() != piece.getSide())
+        {
+            validMoves.push_back({move, true});
+        }
+    }
+
     return validMoves;
 }
 bool Board::isValidMove(Piece &piece, sf::Vector2i newPosition) const

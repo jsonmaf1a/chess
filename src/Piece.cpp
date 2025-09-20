@@ -1,15 +1,15 @@
 #include "Piece.hpp"
 #include "managers/TextureManager.hpp"
-#include "managers/TransitionManager.hpp"
 #include "shared/Notation.hpp"
-#include "shared/PropertyTransition.hpp"
 #include "shared/config/Board.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <iostream>
 #include <math.h>
+#include <wisp/core/managers/TransitionManager.hpp>
+#include <wisp/transitions/PropertyTransition.hpp>
 
 Piece::Piece(PieceKind kind, Side side, sf::Vector2i position)
-    : UIComponent({BoardConfig::CellSize, BoardConfig::CellSize})
+    : Component({BoardConfig::CellSize, BoardConfig::CellSize})
     , currentPosition(position)
     , kind(kind)
     , side(side)

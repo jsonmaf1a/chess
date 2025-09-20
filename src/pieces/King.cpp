@@ -19,3 +19,9 @@ std::vector<sf::Vector2i> King::getLegalMoves() const
 
     return moves;
 };
+
+std::vector<sf::Vector2i> King::getValidMoves(Board &board) const
+{
+    std::vector<sf::Vector2i> moves;
+    return moves;
+}

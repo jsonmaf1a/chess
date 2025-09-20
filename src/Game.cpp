@@ -1,9 +1,9 @@
 #include "Game.hpp"
 #include "managers/SoundManager.hpp"
-#include "shared/utils/EventUtils.hpp"
-#include "shared/utils/PositionUtils.hpp"
 #include <chrono>
 #include <iostream>
+#include <wisp/utils/EventUtils.hpp>
+#include <wisp/utils/PositionUtils.hpp>
 
 void Game::update()
 {

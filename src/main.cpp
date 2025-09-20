@@ -1,14 +1,13 @@
 #include "Game.hpp"
 #include "Sidebar.hpp"
-#include "Window.hpp"
 #include "managers/FontManager.hpp"
 #include "managers/SoundManager.hpp"
 #include "managers/ThemeManager.hpp"
 #include "shared/config/Layout.hpp"
-
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <iostream>
+#include <wisp/core/Window.hpp>
 
 int preloadAssets()
 {
@@ -34,19 +33,26 @@ int main()
     if(preloadAssets() != 0)
         return -1;
 
-    Window window;
+    Window window(LayoutConfig::WindowSize.x, LayoutConfig::WindowSize.y);
+
     auto &ui = window.getUI();
     auto &renderWindow = window.getRenderWindow();
 
     auto game = std::make_shared<Game>(renderWindow, ui);
+
     window.getEventDispatcher().registerListener(game);
 
-    auto sidebar = std::make_shared<Sidebar>(
-        renderWindow, LayoutConfig::SidebarBounds,
-        LayoutConfig::SidebarViewport, game->getState());
+    auto &gameState = game->getState();
+    gameState.isPlaying = true;
+    // gameState.hasGameStarted = true;
+    gameState.initializeTimers();
+
+    auto sidebar =
+        std::make_shared<Sidebar>(renderWindow, LayoutConfig::SidebarBounds,
+                                  LayoutConfig::SidebarViewport, gameState);
     ui.addComponent(sidebar);
 
-    sidebar->addButtons();
+    // sidebar->addButtons();
 
     while(window.isOpen())
     {

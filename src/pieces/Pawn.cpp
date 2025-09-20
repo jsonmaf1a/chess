@@ -34,30 +34,32 @@
 // };
 std::vector<sf::Vector2i> Pawn::getValidMoves(Board &board) const
 {
-    for(const auto &move : this->getLegalMoves())
-    {
-        if(move.x < 0 || move.x >= BoardConfig::GridSize || move.y < 0 ||
-           move.y >= BoardConfig::GridSize)
-            continue;
-
-        std::shared_ptr<Piece> targetPiece = board->getPiece(move);
-
-        if(piece.getKind() == PieceKind::Pawn)
-        {
-            // Forward moves must be empty
-            if(move.x == piece.getPosition().x)
-            {
-                if(!targetPiece)
-                    validMoves.push_back({move, false});
-            }
-            // Diagonal moves must be captures
-            else if(targetPiece && targetPiece->getSide() != piece.getSide())
-            {
-                validMoves.push_back({move, true});
-            }
-            continue;
-        }
-    }
+    std::vector<sf::Vector2i> moves;
+    return moves;
+    // for(const auto &move : this->getLegalMoves())
+    // {
+    //     if(move.x < 0 || move.x >= BoardConfig::GridSize || move.y < 0 ||
+    //        move.y >= BoardConfig::GridSize)
+    //         continue;
+    //
+    //     std::shared_ptr<Piece> targetPiece = board->getPiece(move);
+    //
+    //     if(piece.getKind() == PieceKind::Pawn)
+    //     {
+    //         // Forward moves must be empty
+    //         if(move.x == piece.getPosition().x)
+    //         {
+    //             if(!targetPiece)
+    //                 validMoves.push_back({move, false});
+    //         }
+    //         // Diagonal moves must be captures
+    //         else if(targetPiece && targetPiece->getSide() != piece.getSide())
+    //         {
+    //             validMoves.push_back({move, true});
+    //         }
+    //         continue;
+    //     }
+    // }
 }
 
 std::vector<sf::Vector2i> Pawn::getLegalMoves() const
