@@ -1,6 +1,6 @@
 #include "GameState.hpp"
-#include "shared/GameData.hpp"
-#include "shared/Notation.hpp"
+#include "GameData.hpp"
+#include "Notation.hpp"
 #include <chrono>
 #include <iostream>
 

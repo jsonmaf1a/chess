@@ -1,14 +1,13 @@
 #pragma once
 
+#include "Move.hpp"
 #include "Piece.hpp"
-#include "shared/Move.hpp"
-#include "shared/config/Board.hpp"
-#include <wisp/core/Component.hpp>
-
+#include "config/Board.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
+#include <wisp/core/Component.hpp>
 
 class Board : public Component
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shared/GameData.hpp"
+#include "GameData.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <vector>

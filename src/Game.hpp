@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Board.hpp"
+#include "GameData.hpp"
 #include "GameState.hpp"
-#include "shared/GameData.hpp"
-#include "shared/config/Layout.hpp"
+#include "config/Layout.hpp"
 #include <memory>
 #include <wisp/core/managers/UIManager.hpp>
 #include <wisp/events/EventHandler.hpp>

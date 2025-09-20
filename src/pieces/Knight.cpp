@@ -1,5 +1,5 @@
 #include "Knight.hpp"
-#include "../shared/config/Board.hpp"
+#include "../config/Board.hpp"
 
 std::vector<sf::Vector2i> Knight::getLegalMoves() const
 {

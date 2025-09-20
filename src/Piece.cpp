@@ -1,7 +1,7 @@
 #include "Piece.hpp"
+#include "Notation.hpp"
+#include "config/Board.hpp"
 #include "managers/TextureManager.hpp"
-#include "shared/Notation.hpp"
-#include "shared/config/Board.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <iostream>
 #include <math.h>

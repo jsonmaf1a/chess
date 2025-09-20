@@ -1,5 +1,5 @@
 #include "King.hpp"
-#include "../shared/config/Board.hpp"
+#include "../config/Board.hpp"
 
 std::vector<sf::Vector2i> King::getLegalMoves() const
 {

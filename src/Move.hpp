@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Piece.hpp"
+#include "Piece.hpp"
 #include <SFML/System/Vector2.hpp>
 
 struct Move

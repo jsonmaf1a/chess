@@ -1,9 +1,9 @@
 #include "Game.hpp"
 #include "Sidebar.hpp"
+#include "config/Layout.hpp"
 #include "managers/FontManager.hpp"
 #include "managers/SoundManager.hpp"
 #include "managers/ThemeManager.hpp"
-#include "shared/config/Layout.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <iostream>
@@ -42,10 +42,12 @@ int main()
 
     window.getEventDispatcher().registerListener(game);
 
+    // NOTE: temporary ↓
     auto &gameState = game->getState();
     gameState.isPlaying = true;
     // gameState.hasGameStarted = true;
     gameState.initializeTimers();
+    // NOTE: temporary ↑
 
     auto sidebar =
         std::make_shared<Sidebar>(renderWindow, LayoutConfig::SidebarBounds,

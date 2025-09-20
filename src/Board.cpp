@@ -1,4 +1,5 @@
 #include "Board.hpp"
+#include "Notation.hpp"
 #include "managers/FontManager.hpp"
 #include "managers/ThemeManager.hpp"
 #include "pieces/Bishop.hpp"
@@ -7,7 +8,6 @@
 #include "pieces/Pawn.hpp"
 #include "pieces/Queen.hpp"
 #include "pieces/Rook.hpp"
-#include "shared/Notation.hpp"
 #include <iostream>
 #include <wisp/ui/VertexShapes.hpp>
 #include <wisp/utils/PositionUtils.hpp>

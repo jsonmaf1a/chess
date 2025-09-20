@@ -1,8 +1,8 @@
 #pragma once
 
-#include "shared/GameData.hpp"
-#include "shared/Move.hpp"
-#include "shared/Time.hpp"
+#include "GameData.hpp"
+#include "Move.hpp"
+#include "Time.hpp"
 #include <chrono>
 #include <memory>
 #include <vector>
